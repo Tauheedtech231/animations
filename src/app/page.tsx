@@ -1,7 +1,7 @@
 // components/AcmeUniversity.tsx
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   FiCheck, 
   FiClock, 
@@ -19,6 +19,82 @@ import {
   FiBriefcase,
 
 } from 'react-icons/fi';
+
+
+
+
+// Single component with animated number
+export const StatsSection: React.FC = () => {
+
+  // Animated number component inside same file
+  const StatsCount: React.FC<{ end: number; duration?: number; suffix?: string }> = ({ end, duration = 2000, suffix = '' }) => {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+      let start = 0;
+      const increment = end / (duration / 16); // ~60fps
+
+      const animate = () => {
+        start += increment;
+        if (start < end) {
+          setCount(Math.floor(start));
+          requestAnimationFrame(animate);
+        } else {
+          setCount(end);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }, [end, duration]);
+
+    return <span>{count.toLocaleString()}{suffix}</span>;
+  };
+
+  const stats = [
+    { icon: <FiUsers className="w-8 h-8" />, label: 'Students Enrolled', value: 10000, suffix: '+', description: 'Active learners worldwide' },
+    { icon: <FiTrendingUp className="w-8 h-8" />, label: 'Growth Rate', value: 65, suffix: '%', description: 'Year-over-year growth' },
+    { icon: <FiHome className="w-8 h-8" />, label: 'Colleges', value: 25, suffix: '+', description: 'Specialized institutions' },
+  ];
+
+  return (
+    <section className="py-16 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {stats.map((stat, index) => (
+            <div key={index} className="bg-white rounded-2xl p-8 text-center hover:shadow-xl transition-shadow">
+              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-4">
+                {stat.icon}
+              </div>
+              <h3 className="text-3xl font-bold text-gray-900 mb-2">
+                <StatsCount end={stat.value} suffix={stat.suffix} />
+              </h3>
+              <p className="text-lg font-semibold text-gray-700 mb-2">{stat.label}</p>
+              <p className="text-gray-500">{stat.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+
+
+
+// Custom Hook to animate numbers
+
+
+// Individual Stat Card
+
+
+// Stats Section
+
+
+
+
+
+
+
 
 const AcmeUniversity = () => {
   return (
@@ -60,26 +136,7 @@ const AcmeUniversity = () => {
         </section>
 
         {/* Stats Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { icon: <FiUsers className="w-8 h-8" />, label: 'Students Enrolled', value: '10,000+', description: 'Active learners worldwide' },
-                { icon: <FiTrendingUp className="w-8 h-8" />, label: 'Growth Rate', value: '65%', description: 'Year-over-year growth' },
-                { icon: <FiHome className="w-8 h-8" />, label: 'Colleges', value: '25+', description: 'Specialized institutions' }
-              ].map((stat, index) => (
-                <div key={index} className="bg-white rounded-2xl p-8 text-center hover:shadow-xl transition-shadow">
-                  <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-4">
-                    {stat.icon}
-                  </div>
-                  <h3 className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</h3>
-                  <p className="text-lg font-semibold text-gray-700 mb-2">{stat.label}</p>
-                  <p className="text-gray-500">{stat.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+      <StatsSection />
 
         {/* About Section */}
         <section className="py-16">

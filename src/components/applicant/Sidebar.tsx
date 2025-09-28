@@ -3,9 +3,17 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import {
+  FiHome,
+  FiFileText,
+  FiCreditCard,
+  FiBell,
+  FiBarChart2,
+  FiLogOut,
+} from 'react-icons/fi';
 
 interface SidebarItem {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   href: string;
 }
@@ -19,15 +27,15 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
   const pathname = usePathname();
 
   const menuItems: SidebarItem[] = [
-    { icon: 'dashboard', label: 'Dashboard', href: '/applicant_portal' },
-    { icon: 'description', label: 'My Applications', href: '/applicant_portal/my_application' },
-    { icon: 'payment', label: 'Fee Payment', href: '/applicant_portal/fee_mange' },
-    { icon: 'notifications', label: 'Notifications', href: '/applicant_portal/notification_page' },
-    { icon: 'query_stats', label: 'Results', href: '/applicant_portal/result_page' },
+    { icon: <FiHome />, label: 'Dashboard', href: '/applicant_portal' },
+    { icon: <FiFileText />, label: 'My Applications', href: '/applicant_portal/my_application' },
+    { icon: <FiCreditCard />, label: 'Fee Payment', href: '/applicant_portal/fee_mange' },
+    { icon: <FiBell />, label: 'Notifications', href: '/applicant_portal/notification_page' },
+    { icon: <FiBarChart2 />, label: 'Results', href: '/applicant_portal/result_page' },
   ];
 
   const bottomItems: SidebarItem[] = [
-    { icon: 'logout', label: 'Logout', href: '/logout' },
+    { icon: <FiLogOut />, label: 'Logout', href: '/logout' },
   ];
 
   return (
@@ -65,7 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
   );
 };
 
-// Sidebar content extracted to avoid duplication
+// Sidebar content component
 const SidebarContent: React.FC<{
   pathname: string;
   menuItems: SidebarItem[];
@@ -107,15 +115,7 @@ const SidebarContent: React.FC<{
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
               }`}
             >
-              <span
-                className={`material-symbols-outlined text-[22px] ${
-                  isActive
-                    ? 'text-white'
-                    : 'text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400'
-                }`}
-              >
-                {item.icon}
-              </span>
+              {item.icon}
               <span>{item.label}</span>
             </Link>
           );
@@ -130,9 +130,7 @@ const SidebarContent: React.FC<{
             href={item.href}
             className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all group"
           >
-            <span className="material-symbols-outlined text-[22px] text-gray-500 group-hover:text-red-500">
-              {item.icon}
-            </span>
+            {item.icon}
             <span>{item.label}</span>
           </Link>
         ))}
