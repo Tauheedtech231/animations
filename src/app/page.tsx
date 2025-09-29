@@ -18,12 +18,12 @@ import {
   FiGlobe,
   FiAward,
   FiBriefcase,
-  FiMenu,
-  FiX
+
 } from 'react-icons/fi';
 import Image from 'next/image';
-import Link from 'next/link';
+
 import { Link as ScrollLink } from 'react-scroll';
+
 
 // Enhanced Animation variants
 const fadeInUp: Variants = {
