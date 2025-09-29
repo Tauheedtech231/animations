@@ -149,15 +149,16 @@ export default function Navbar() {
               })}
 
               {isAuthenticated && user ? (
-                <button
-                  onClick={() => {
-                    logout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium bg-red-500 text-white hover:bg-red-600 transition-transform transform hover:scale-105"
-                >
-                  Logout
-                </button>
+               <button
+  onClick={() => {
+    logout();
+    setIsMenuOpen(false);
+  }}
+  className="block w-full text-left px-4 py-3 rounded-xl text-base font-medium bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-md hover:from-red-600 hover:to-pink-600 transition-all transform hover:scale-105"
+>
+  Logout
+</button>
+
               ) : (
                 <>
                   <Link

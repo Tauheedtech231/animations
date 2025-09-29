@@ -611,11 +611,12 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = ({
 
 // Enhanced Quick Actions Grid Component
 
+
 import { jsPDF } from "jspdf";
- // your auth context
+ // adjust path
 
 const QuickActionsGrid = () => {
-  const { user } = useAuth(); // current logged-in user
+  const { user } = useAuth();
   const [uploadedFiles, setUploadedFiles] = useState<{
     [key: string]: File | null;
   }>({
@@ -629,7 +630,6 @@ const QuickActionsGrid = () => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       setUploadedFiles((prev) => ({ ...prev, [docType]: file }));
-      alert(`${file.name} uploaded successfully!`);
     }
   };
 
@@ -643,15 +643,13 @@ const QuickActionsGrid = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
     doc.text("Fee Payment Challan", 20, 20);
-
     doc.setFontSize(12);
     doc.text(`Name: ${user.firstName} ${user.lastName}`, 20, 40);
     doc.text(`Email: ${user.email}`, 20, 50);
     doc.text(`Role: ${user.role}`, 20, 60);
-    doc.text("Program: Computer Science", 20, 70); // example program
+    doc.text("Program: Computer Science", 20, 70);
     doc.text("Amount: $500", 20, 80);
     doc.text("Due Date: 30-Sep-2025", 20, 90);
-
     doc.save(`Fee_Challan_${user.firstName}_${user.lastName}.pdf`);
   };
 
@@ -679,6 +677,22 @@ const QuickActionsGrid = () => {
     },
   ];
 
+  // Render file preview
+  const renderFilePreview = (file: File) => {
+    const url = URL.createObjectURL(file);
+    if (file.type.startsWith("image/")) {
+      return <img src={url} alt={file.name} className="w-24 h-24 object-cover rounded-lg" />;
+    } else if (file.type === "application/pdf") {
+      return (
+        <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+          {file.name} (PDF)
+        </a>
+      );
+    } else {
+      return <span>{file.name}</span>;
+    }
+  };
+
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       {quickActions.map((section, sectionIndex) => (
@@ -692,38 +706,38 @@ const QuickActionsGrid = () => {
           </div>
 
           {section.items && (
-            <div className="space-y-3 mb-4">
+            <div className="space-y-4 mb-4">
               {section.items.map((item, itemIndex) => (
-                <label
-                  key={itemIndex}
-                  className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-blue-300 cursor-pointer transition-all hover:shadow-md"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-50 rounded-lg">{item.icon}</div>
-                    <span className="font-medium text-gray-800">{item.label}</span>
-                  </div>
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={(e) => handleFileUpload(e, item.key)}
-                  />
-                  <FiUpload className="w-5 h-5 text-gray-400" />
-                </label>
-              ))}
-
-              {/* Display uploaded files */}
-              <div className="mt-2 text-sm text-green-600 space-y-1">
-                {Object.entries(uploadedFiles).map(([key, file]) =>
-                  file ? (
-                    <div key={key}>
-                      {key === "bForm" && "B-Form: "}
-                      {key === "feeVoucher" && "Fee Voucher: "}
-                      {key === "admissionLetter" && "Admission Letter: "}
-                      {file.name}
+                <div key={itemIndex} className="flex flex-col gap-2">
+                  <label className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-blue-300 cursor-pointer transition-all hover:shadow-md">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-50 rounded-lg">{item.icon}</div>
+                      <span className="font-medium text-gray-800">{item.label}</span>
                     </div>
-                  ) : null
-                )}
-              </div>
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={(e) => handleFileUpload(e, item.key)}
+                    />
+                    <FiUpload className="w-5 h-5 text-gray-400" />
+                  </label>
+
+                  {/* Show uploaded file preview with option to replace */}
+                  {uploadedFiles[item.key] && (
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      {renderFilePreview(uploadedFiles[item.key]!)}
+                      <button
+                        className="ml-auto px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                        onClick={() =>
+                          setUploadedFiles((prev) => ({ ...prev, [item.key]: null }))
+                        }
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
 
@@ -749,6 +763,9 @@ const QuickActionsGrid = () => {
     </div>
   );
 };
+
+
+
 
 
 
@@ -807,10 +824,10 @@ const GuidanceTips = () => {
             <div className="p-6">
               <h4 className="text-lg font-semibold text-gray-900 mb-2">{tip.title}</h4>
               <p className="text-gray-600 mb-4">{tip.description}</p>
-              <button className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2 transition-colors">
+             <Link href="/applicant_portal/guidance"> <button className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2 transition-colors">
                 Learn More
                 <FiArrowRight className="w-4 h-4" />
-              </button>
+              </button></Link>
             </div>
           </div>
         ))}

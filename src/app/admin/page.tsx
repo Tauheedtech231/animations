@@ -66,23 +66,18 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
         w-80 lg:w-64 xl:w-80 transform transition-all duration-300 ease-in-out
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         flex flex-col bg-white border-r border-gray-200 shadow-lg lg:shadow-none
+        h-screen
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 lg:p-6 border-b border-gray-200">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm lg:text-lg">EC</span>
-              </div>
-              <div className="hidden lg:block">
-                <h1 className="text-xl font-semibold text-gray-900">EduConnect</h1>
-                <p className="text-sm text-gray-500">Admin Portal</p>
-              </div>
-              <div className="lg:hidden">
-                <h1 className="text-lg font-semibold text-gray-900">EduConnect</h1>
-                <p className="text-xs text-gray-500">Admin</p>
-              </div>
+            {/* Mobile title */}
+            <div className="lg:hidden">
+              <h1 className="text-lg font-semibold text-gray-900">EduConnect</h1>
+              <p className="text-xs text-gray-500">Admin</p>
             </div>
+
+            {/* Mobile close button */}
             <button 
               className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
               onClick={() => setMobileOpen(false)}
@@ -106,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-3 lg:p-4 space-y-1">
+          <nav className="flex-1 p-3 lg:p-4 space-y-1 overflow-y-auto">
             {menuItems.map((item, index) => (
               <Link
                 key={index}
@@ -140,17 +135,13 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
           </nav>
 
           {/* Footer */}
-          <div className="p-3 lg:p-4 border-t border-gray-200">
-            <button className="flex items-center gap-3 px-3 lg:px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 w-full transition-colors">
-              <FiLogOut size={20} className="text-gray-400 flex-shrink-0" />
-              <span className="font-medium text-sm lg:text-base">Logout</span>
-            </button>
-          </div>
+          {/* Logout removed */}
         </div>
       </aside>
     </>
   );
 };
+
 
 // ---------- Header Component ----------
 interface HeaderProps {
