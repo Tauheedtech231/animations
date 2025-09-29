@@ -18,7 +18,7 @@ import {
   FiEdit,
   FiEye,
  
-  FiChevronRight,
+ 
   FiArrowRight,
   FiHelpCircle,
   FiCalendar,
@@ -40,6 +40,16 @@ interface Application {
 
 const Dashboard = () => {
   const {user}=useAuth();
+
+  const STORAGE_KEY = "multistep-form-data"
+  useEffect(()=>{
+    const storedData = localStorage.getItem(STORAGE_KEY);
+
+if (storedData) {
+  const parsedData = JSON.parse(storedData);
+  console.log(parsedData.name); // "John"
+}
+  },[])
   const [applications, setApplications] = useState<Application[]>([
     {
       id: "APP2024-001",
@@ -108,34 +118,46 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 font-sans">
       <div className="flex-1 flex flex-col">
-        {/* Enhanced Header */}
-        <header className="bg-white/80 backdrop-blur-lg border-b border-gray-200 sticky top-0 z-50">
-          <div className="flex items-center justify-between px-6 h-16">
-            <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Student Portal
-              </h2>
-              <p className="text-sm text-gray-500">Welcome back {user?.firstName}</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="relative p-3 rounded-xl bg-white border border-gray-200 hover:border-blue-300 transition-all hover:shadow-lg">
-                <FiBell className="w-5 h-5 text-gray-600" />
-                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
-              <div className="relative">
-                <button className="flex items-center gap-3 p-2 rounded-xl bg-white border border-gray-200 hover:border-blue-300 transition-all">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    <FiUser className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="text-left hidden sm:block">
-                    <p className="text-sm font-medium text-gray-900">{user?.firstName}</p>
-                    <p className="text-xs text-gray-500">Computer Science</p>
-                  </div>
-                </button>
-              </div>
-            </div>
+<header className="bg-gradient-to-r from-blue-500 to-blue-700 border border-white/30 sticky top-0 z-50 rounded-3xl shadow-lg mx-4 my-4">
+  <div className="flex flex-col items-center justify-center sm:flex-row sm:justify-between px-6 py-4 h-16 sm:h-20 text-center sm:text-left">
+    {/* Title + Welcome */}
+    <div>
+      <h2 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+        Student Portal
+      </h2>
+      <p className="text-xs sm:text-sm text-white/90">
+        Welcome back {user?.firstName}
+      </p>
+    </div>
+
+    {/* Right Section */}
+    <div className="hidden sm:flex items-center gap-4">
+      {/* Notifications */}
+      <button className="relative p-3 rounded-full bg-white/20 border border-white/40 hover:border-white/70 transition-all hover:shadow-lg">
+        <FiBell className="w-5 h-5 text-white" />
+        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+      </button>
+
+      {/* Profile */}
+      <div className="relative">
+        <button className="flex items-center gap-3 p-2 rounded-full bg-white/20 border border-white/40 hover:border-white/70 transition-all">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-300 to-purple-500 rounded-full flex items-center justify-center">
+            <FiUser className="w-5 h-5 text-white" />
           </div>
-        </header>
+          <div className="text-left">
+            <p className="text-sm font-medium text-white">{user?.firstName}</p>
+            <p className="text-xs text-white/80">Computer Science</p>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+
+
+
 
         {/* Main Content */}
         <main className="flex-1 p-6 space-y-8 max-w-7xl mx-auto w-full">
@@ -761,10 +783,7 @@ const GuidanceTips = () => {
           <h3 className="text-2xl font-bold text-gray-900">Guidance & Support</h3>
           <p className="text-gray-600">Helpful tips to complete your application successfully</p>
         </div>
-        <button className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2">
-          View All
-          <FiChevronRight className="w-4 h-4" />
-        </button>
+        
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">

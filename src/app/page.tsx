@@ -1,7 +1,9 @@
 // components/AcmeUniversity.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { Variants } from "framer-motion";
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { 
   FiCheck, 
   FiClock, 
@@ -10,29 +12,77 @@ import {
   FiTrendingUp, 
   FiHome, 
   FiBook, 
-
   FiMail, 
   FiPhone,
   FiArrowRight,
   FiGlobe,
   FiAward,
   FiBriefcase,
-
 } from 'react-icons/fi';
+import Image from 'next/image';
+import Link from 'next/link';
 
+// Animation variants
+const fadeInUp :Variants= {
+  hidden: { opacity: 0, y: 60 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
+};
 
+const fadeInLeft: Variants = {
+  hidden: { opacity: 0, x: -60 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
+};
 
+const fadeInRight: Variants = {
+  hidden: { opacity: 0, x: 60 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
+};
 
-// Single component with animated number
-export const StatsSection: React.FC = () => {
+const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeInOut" },
+  },
+};
 
-  // Animated number component inside same file
-  const StatsCount: React.FC<{ end: number; duration?: number; suffix?: string }> = ({ end, duration = 2000, suffix = '' }) => {
-    const [count, setCount] = useState(0);
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
 
-    useEffect(() => {
+// Animated number component with intersection observer
+const StatsCount: React.FC<{ end: number; duration?: number; suffix?: string }> = ({ 
+  end, 
+  duration = 2000, 
+  suffix = '' 
+}) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  useEffect(() => {
+    if (isInView) {
       let start = 0;
-      const increment = end / (duration / 16); // ~60fps
+      const increment = end / (duration / 16);
 
       const animate = () => {
         start += increment;
@@ -45,10 +95,20 @@ export const StatsSection: React.FC = () => {
       };
 
       requestAnimationFrame(animate);
-    }, [end, duration]);
+    }
+  }, [end, duration, isInView]);
 
-    return <span>{count.toLocaleString()}{suffix}</span>;
-  };
+  return (
+    <span ref={ref}>
+      {count.toLocaleString()}{suffix}
+    </span>
+  );
+};
+
+// Stats Section with animations
+export const StatsSection: React.FC = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   const stats = [
     { icon: <FiUsers className="w-8 h-8" />, label: 'Students Enrolled', value: 10000, suffix: '+', description: 'Active learners worldwide' },
@@ -57,11 +117,20 @@ export const StatsSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section ref={ref} className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
           {stats.map((stat, index) => (
-            <div key={index} className="bg-white rounded-2xl p-8 text-center hover:shadow-xl transition-shadow">
+            <motion.div
+              key={index}
+              variants={scaleIn}
+              className="bg-white rounded-2xl p-8 text-center hover:shadow-xl transition-shadow"
+            >
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-4">
                 {stat.icon}
               </div>
@@ -70,117 +139,160 @@ export const StatsSection: React.FC = () => {
               </h3>
               <p className="text-lg font-semibold text-gray-700 mb-2">{stat.label}</p>
               <p className="text-gray-500">{stat.description}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
 
+// Animated Section Wrapper
+const AnimatedSection: React.FC<{
+  children: React.ReactNode;
+  direction?: 'up' | 'left' | 'right' | 'scale';
+  className?: string;
+}> = ({ children, direction = 'up', className = '' }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
+  const getVariant = () => {
+    switch (direction) {
+      case 'left': return fadeInLeft;
+      case 'right': return fadeInRight;
+      case 'scale': return scaleIn;
+      default: return fadeInUp;
+    }
+  };
 
-
-// Custom Hook to animate numbers
-
-
-// Individual Stat Card
-
-
-// Stats Section
-
-
-
-
-
-
-
+  return (
+    <motion.div
+      ref={ref}
+      variants={getVariant()}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 const AcmeUniversity = () => {
+  const heroRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
   return (
     <div className="min-h-screen bg-white font-sans overflow-x-hidden">
       {/* Header */}
-     
 
       {/* Main Content */}
       <main>
-        {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 text-white">
-          <div 
+        {/* Hero Section with Parallax */}
+        <section ref={heroRef} className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 text-white min-h-screen flex items-center justify-center">
+          <motion.div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
             style={{
-              backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBEuAvUy5aE3s1-FUmYxvYifm1K5mVJyGeIhyY-nW48GzHBJRkzg_Wuhfg0b5i5MlySkr6kW8hwJmiBw-oUBKEUW_JbZFWD02Pknz0VjxLkWdWohqxpq0VzyVfPeTvk0gIANtgDs1VfqHW64ZhqE9U8WyM0TcLc-xkXMU_z1aJ_9pFScVJyQlEBxzhqTxx9E8c6MgwgKracTOCgD8LoZz0KU7dKNScS030gI7vGPlEGmzGp4upxN0I0P_W6w9sf44xpRTH1R6pfZCQ")'
+              backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBEuAvUy5aE3s1-FUmYxvYifm1K5mVJyGeIhyY-nW48GzHBJRkzg_Wuhfg0b5i5MlySkr6kW8hwJmiBw-oUBKEUW_JbZFWD02Pknz0VjxLkWdWohqxpq0VzyVfPeTvk0gIANtgDs1VfqHW64ZhqE9U8WyM0TcLc-xkXMU_z1aJ_9pFScVJyQlEBxzhqTxx9E8c6MgwgKracTOCgD8LoZz0KU7dKNScS030gI7vGPlEGmzGp4upxN0I0P_W6w9sf44xpRTH1R6pfZCQ")',
+              y
             }}
           />
           <div className="relative container mx-auto px-4 py-20 lg:py-28">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
+              <motion.h1 
+                className="text-4xl lg:text-6xl font-bold leading-tight mb-6"
+                initial={{ opacity: 0, y: 60 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
                 Unlock Your Potential at{' '}
                 <span className="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-transparent">
                   Acme University
                 </span>
-              </h1>
-              <p className="text-xl lg:text-2xl text-blue-100 leading-relaxed mb-8 max-w-3xl mx-auto">
+              </motion.h1>
+              <motion.p 
+                className="text-xl lg:text-2xl text-blue-100 leading-relaxed mb-8 max-w-3xl mx-auto"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              >
                 Embark on a transformative educational journey with our diverse programs and supportive community.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              </motion.p>
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-4 justify-center"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              >
                 <button className="px-8 py-4 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-all transform hover:-translate-y-1 shadow-lg">
                   Explore Programs
                 </button>
                 <button className="px-8 py-4 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-all">
                   Virtual Tour
                 </button>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
 
         {/* Stats Section */}
-      <StatsSection />
+        <StatsSection />
 
         {/* About Section */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-4xl font-bold text-gray-900 mb-6">About Acme University</h2>
-                <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                  Acme University is dedicated to providing a world-class education that empowers students to excel in their chosen fields. Our commitment to innovation, research, and community engagement creates a vibrant learning environment.
-                </p>
-                <p className="text-lg text-gray-600 leading-relaxed mb-8">
-                  With state-of-the-art facilities and industry-expert faculty, we prepare students for successful careers in a rapidly evolving global landscape.
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                    Learn More
-                  </button>
-                  <button className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                    Meet Our Faculty
-                  </button>
-                </div>
-              </div>
-              <div className="relative">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-  <Image
-    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXdwsQhacxRyXOAXzUOCPwJ5dhaqk_F9tkR1TfIM1dV6DO13qa6KGs39f2PZFzxGtj-UJy_wGSUh3jx3wAb5CAizDrx0TfkVz7oxOnRtbh-BmnNmJUeoFl5gVwcDaPeLLm1sRIpEZaeVBsJc2TNuEhhTo9m2vQC7-1PLuaHbSDqBZs5CSUeXYlQTvk9xAQFXUsjdleLBLoOU96hHmqDE7H8FPDVt1hRgEuZDfdSwuMZG7lI1Ihd3xSR1CK71xwIjF4xZqInO6VYk8"
-    alt="Acme University Campus"
-    fill
-    className="object-cover"
-  />
-</div>
-
-                <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-6 shadow-xl">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
-                      <FiAward className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">Top Ranked</p>
-                      <p className="text-sm text-gray-500">Nationwide</p>
-                    </div>
+              <AnimatedSection direction="left">
+                <div>
+                  <h2 className="text-4xl font-bold text-gray-900 mb-6">About Acme University</h2>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                    Acme University is dedicated to providing a world-class education that empowers students to excel in their chosen fields. Our commitment to innovation, research, and community engagement creates a vibrant learning environment.
+                  </p>
+                  <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                    With state-of-the-art facilities and industry-expert faculty, we prepare students for successful careers in a rapidly evolving global landscape.
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                      Contact Now
+                    </button>
                   </div>
                 </div>
-              </div>
+              </AnimatedSection>
+              <AnimatedSection direction="right">
+                <div className="relative">
+                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+                    <Image
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXdwsQhacxRyXOAXzUOCPwJ5dhaqk_F9tkR1TfIM1dV6DO13qa6KGs39f2PZFzxGtj-UJy_wGSUh3jx3wAb5CAizDrx0TfkVz7oxOnRtbh-BmnNmJUeoFl5gVwcDaPeLLm1sRIpEZaeVBsJc2TNuEhhTo9m2vQC7-1PLuaHbSDqBZs5CSUeXYlQTvk9xAQFXUsjdleLBLoOU96hHmqDE7H8FPDVt1hRgEuZDfdSwuMZG7lI1Ihd3xSR1CK71xwIjF4xZqInO6VYk8"
+                      alt="Acme University Campus"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <motion.div 
+                    className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-6 shadow-xl"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
+                        <FiAward className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">Top Ranked</p>
+                        <p className="text-sm text-gray-500">Nationwide</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              </AnimatedSection>
             </div>
           </div>
         </section>
@@ -211,9 +323,10 @@ const AcmeUniversity = () => {
 };
 
 // Programs Section Component
-
-
 const ProgramsSection = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   const programs = [
     {
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDZyZI6rdCXJ8HvyV4rkaEbF53CtU3QYEOn-9-WegJ5_1PzmnG59ksBCfuYvyv-pQOJVpFC19JN8merJ3R9wrQsdMl73ZkvfpkmGs9ZdnHkwNWolOd6AX7lTIPs_qQO9PZnBzvC6vfXzgaVmKfi3I26w2ZaGiRxPDSqokySYu_jN4eVdN7FHNsOqzyMEU1QP8UvnEhae9sJiC411rVdmPVUS7uNXDmRN9KXJ43dIclFr_ZYbggvnW6493CKh1nXWx8c8T3KVwYv3u0",
@@ -246,18 +359,29 @@ const ProgramsSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section ref={ref} className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Programs</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover our comprehensive range of undergraduate and graduate programs designed for your success.
-          </p>
-        </div>
+        <AnimatedSection direction="up">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Programs</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Discover our comprehensive range of undergraduate and graduate programs designed for your success.
+            </p>
+          </div>
+        </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
           {programs.map((program, index) => (
-            <div key={index} className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col">
+            <motion.div
+              key={index}
+              variants={scaleIn}
+              className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 group flex flex-col"
+            >
               <div className="relative overflow-hidden w-full h-48">
                 <Image
                   src={program.image}
@@ -282,29 +406,27 @@ const ProgramsSection = () => {
                   <FiArrowRight className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="text-center mt-8">
-          <button className="px-8 py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors">
-            View All Programs
-          </button>
-        </div>
+        <AnimatedSection direction="up">
+          <div className="text-center mt-8">
+            <button className="px-8 py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors">
+              View All Programs
+            </button>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );
 };
 
-
-
-
 // Success Stories Section Component
-
-
-import Image from 'next/image';
-
 const SuccessStoriesSection = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   const stories = [
     {
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB57s2YsOkUz9IVAPk9rCW_5Q_ZslRYBeuRK8SM4-irKgEvrNGpUwAc2KTeM2KRx78JMaAIoKSz8IkVUIUJbkH4GJR229lxIdsi_hoVBWnUiY_6EKS15dtd8rnmDw9UqKIVEjjN2scSeYt34-J-gR6tp0FKfgLyuUfPL_gIppebBcOWLw55RNTHmblxOgYikrbAA9b5HxvOfVD3P2eHA11F4solLo7SxPCfP49iW_OR88AN9E3SlaJJ8UrMGqbrra0EWcnJJmVr9sA",
@@ -330,19 +452,27 @@ const SuccessStoriesSection = () => {
   ];
 
   return (
-    <section className="py-16">
+    <section ref={ref} className="py-16">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Success Stories</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Hear from our alumni who are making a difference in their industries.
-          </p>
-        </div>
+        <AnimatedSection direction="up">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Success Stories</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Hear from our alumni who are making a difference in their industries.
+            </p>
+          </div>
+        </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
           {stories.map((story, index) => (
-            <div
+            <motion.div
               key={index}
+              variants={fadeInUp}
               className="bg-white dark:bg-[#161b22] rounded-2xl p-6 flex flex-col justify-between hover:shadow-xl transition-shadow min-h-[450px]"
             >
               <div>
@@ -362,19 +492,19 @@ const SuccessStoriesSection = () => {
                 <p className="font-semibold text-gray-900 dark:text-white">{story.name}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{story.role}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
 
-
-
-
 // Featured Projects Section Component
 const FeaturedProjectsSection = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   const projects = [
     {
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCsYvbGrpNnURV4yj9qDAA7Mx9TUPIAcVs9lUbTQqZfpDWNyOxQSItHN_fAbzrmCGpPHLvQBIFrvk64Wr35NY5RMJ66EASHN_h2D0GuRBfzajZyZrO1YpcEyXQ_9KZlaGTSVPcbRnJtF-5OjFLtvJYGG2APFqSremNKlRe85ZNqWLIqDDZvb7JRgXWfqOoCbiKD0TdUMx4JH11bzibUZWP9yiqAQ0Q0nI0eo8dUp1jkmF0MVezZA_kzz9GfKJBD5juceNMrripUWaE",
@@ -403,27 +533,37 @@ const FeaturedProjectsSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section ref={ref} className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Projects</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Explore innovative projects and research from our students and faculty.
-          </p>
-        </div>
+        <AnimatedSection direction="up">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Projects</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Explore innovative projects and research from our students and faculty.
+            </p>
+          </div>
+        </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
           {projects.map((project, index) => (
-            <div key={index} className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 group">
+            <motion.div
+              key={index}
+              variants={scaleIn}
+              className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 group"
+            >
               <div className="relative overflow-hidden">
-                  <Image
-    src={project.image}          // your image URL
-    alt={project.title}          // alt text
-    fill                         // makes the image cover the container
-    className="object-cover group-hover:scale-110 transition-transform duration-300"
-    sizes="(max-width: 768px) 100vw, 33vw" // responsive sizes
-  />
-
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
                 <div className="absolute top-4 left-4">
                   <span className="px-3 py-1 bg-blue-600 text-white text-sm font-medium rounded-full">
                     {project.category}
@@ -438,9 +578,9 @@ const FeaturedProjectsSection = () => {
                   <FiArrowRight className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -448,6 +588,9 @@ const FeaturedProjectsSection = () => {
 
 // Application Steps Section Component
 const ApplicationStepsSection = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   const steps = [
     {
       icon: <FiCheck className="w-6 h-6" />,
@@ -467,18 +610,29 @@ const ApplicationStepsSection = () => {
   ];
 
   return (
-    <section className="py-16">
+    <section ref={ref} className="py-16">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Apply in 3 Easy Steps</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Start your journey to Acme University with our simple application process.
-          </p>
-        </div>
+        <AnimatedSection direction="up">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Apply in 3 Easy Steps</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Start your journey to Acme University with our simple application process.
+            </p>
+          </div>
+        </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
           {steps.map((step, index) => (
-            <div key={index} className="text-center">
+            <motion.div
+              key={index}
+              variants={fadeInUp}
+              className="text-center"
+            >
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-4">
                 {step.icon}
               </div>
@@ -489,15 +643,20 @@ const ApplicationStepsSection = () => {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h3>
                 <p className="text-gray-600">{step.description}</p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="text-center mt-12">
-          <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors transform hover:-translate-y-1 shadow-lg">
-            Start Your Application
-          </button>
-        </div>
+        <AnimatedSection direction="up">
+          <div className="text-center mt-12">
+            <button
+              onClick={() => window.location.href = '/applicant_portal/my_application'}
+              className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors transform hover:-translate-y-1 shadow-lg"
+            >
+              Start Your Application
+            </button>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );
@@ -505,6 +664,9 @@ const ApplicationStepsSection = () => {
 
 // Why Choose Us Section Component
 const WhyChooseUsSection = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   const features = [
     {
       icon: <FiClock className="w-6 h-6" />,
@@ -529,26 +691,37 @@ const WhyChooseUsSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section ref={ref} className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose Acme University?</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover what makes us the preferred choice for students worldwide.
-          </p>
-        </div>
+        <AnimatedSection direction="up">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose Acme University?</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Discover what makes us the preferred choice for students worldwide.
+            </p>
+          </div>
+        </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          variants={staggerContainer}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+        >
           {features.map((feature, index) => (
-            <div key={index} className="bg-white rounded-2xl p-6 text-center hover:shadow-xl transition-shadow">
+            <motion.div
+              key={index}
+              variants={scaleIn}
+              className="bg-white rounded-2xl p-6 text-center hover:shadow-xl transition-shadow"
+            >
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mx-auto mb-4">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
               <p className="text-gray-600">{feature.description}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -556,23 +729,32 @@ const WhyChooseUsSection = () => {
 
 // CTA Section Component
 const CTASection = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 text-white">
+    <section ref={ref} className="py-20 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 text-white">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-          Your Future Starts Today
-        </h2>
-        <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-          Join thousands of successful students who started their journey at Acme University. Take the first step toward your dream career.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="px-8 py-4 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-all transform hover:-translate-y-1 shadow-lg">
-            Secure Your Admission Now
-          </button>
-          <button className="px-8 py-4 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-all">
-            Schedule Campus Tour
-          </button>
-        </div>
+        <motion.div
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          variants={fadeInUp}
+        >
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+            Your Future Starts Today
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of successful students who started their journey at Acme University. Take the first step toward your dream career.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="px-8 py-4 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-all transform hover:-translate-y-1 shadow-lg">
+              Secure Your Admission Now
+            </button>
+            <button className="px-8 py-4 border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-all">
+              Schedule Campus Tour
+            </button>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -580,33 +762,42 @@ const CTASection = () => {
 
 // Footer Component
 const Footer = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
   const footerSections = [
     {
       title: "Academics",
-      links: ["Undergraduate", "Graduate", "Online Programs", "Courses", "Faculty"]
+      links: ["Undergraduate", "Graduate", "Online Programs"],
     },
     {
       title: "Admissions",
-      links: ["Apply Now", "Requirements", "Tuition & Fees", "Financial Aid", "Visit Campus"]
+      links: ["Apply Now", "Requirements", "Tuition & Fees", "Financial Aid", "Visit Campus"],
     },
     {
       title: "Campus Life",
-      links: ["Student Life", "Housing", "Clubs", "Events", "Athletics"]
+      links: ["Student Life", "Housing", "Events"],
     },
     {
       title: "About",
-      links: ["History", "Leadership", "Careers", "News", "Contact"]
-    }
+      links: ["History", "Leadership", "Careers", "News", "Contact"],
+    },
   ];
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <motion.footer
+      ref={ref}
+      initial={{ opacity: 0, y: 60 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+      transition={{ duration: 0.6 }}
+      className="bg-gray-900 text-white"
+    >
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-10">
           {/* Brand */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+          <div className="lg:col-span-2 text-center sm:text-left">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-lg">AU</span>
               </div>
               <div>
@@ -614,12 +805,15 @@ const Footer = () => {
                 <p className="text-gray-400 text-sm">Excellence in Education</p>
               </div>
             </div>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-400 mb-6 max-w-sm mx-auto sm:mx-0">
               Empowering students to achieve their dreams through quality education and innovative learning.
             </p>
-            <div className="flex gap-4">
+            <div className="flex justify-center sm:justify-start gap-4">
               {[FiPhone, FiMail, FiGlobe].map((Icon, index) => (
-                <button key={index} className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors">
+                <button
+                  key={index}
+                  className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+                >
                   <Icon className="w-5 h-5" />
                 </button>
               ))}
@@ -628,12 +822,15 @@ const Footer = () => {
 
           {/* Links */}
           {footerSections.map((section, index) => (
-            <div key={index}>
+            <div key={index} className="text-center sm:text-left">
               <h4 className="font-semibold mb-4">{section.title}</h4>
               <ul className="space-y-2">
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                    <a
+                      href="#"
+                      className="text-gray-400 hover:text-white transition-colors text-sm"
+                    >
                       {link}
                     </a>
                   </li>
@@ -643,11 +840,12 @@ const Footer = () => {
           ))}
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
+        {/* Bottom bar */}
+        <div className="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-400 text-sm text-center md:text-left">
             © 2024 Acme University. All rights reserved.
           </p>
-          <div className="flex gap-6 mt-4 md:mt-0">
+          <div className="flex flex-wrap justify-center md:justify-end gap-6">
             <a href="#" className="text-gray-400 hover:text-white transition-colors text-sm">
               Privacy Policy
             </a>
@@ -660,7 +858,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
+    </motion.footer>
   );
 };
 

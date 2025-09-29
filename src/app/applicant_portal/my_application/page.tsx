@@ -140,23 +140,23 @@ function PersonalInfoForm({
   };
 
   return (
-    <main className="flex flex-1 justify-center py-10 px-4 sm:px-6 lg:px-8 bg-background-light dark:bg-background-dark min-h-screen font-display">
-      <div className="w-full max-w-2xl space-y-8">
+    <main className="flex flex-col items-center justify-center py-10 px-4 sm:px-6 lg:px-8 bg-background-light dark:bg-background-dark min-h-screen font-display">
+      <div className="w-full max-w-xl sm:max-w-2xl space-y-8">
         {/* Form Card */}
-        <div className="bg-white dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-2xl p-8 space-y-8 shadow-lg transition">
-          <h2 className="text-2xl font-bold text-center text-black dark:text-white">
+        <div className="bg-white dark:bg-background-dark border border-black/10 dark:border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 sm:space-y-8 shadow-lg transition">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-black dark:text-white">
             Personal Information
           </h2>
-          <p className="text-sm text-center text-gray-600 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-center text-gray-600 dark:text-gray-400">
             Please fill out your personal details carefully.
           </p>
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4 sm:space-y-6" onSubmit={(e) => e.preventDefault()}>
             {/* Full Name */}
             <div>
               <label
                 htmlFor="full-name"
-                className="block text-sm font-medium text-black dark:text-white mb-2"
+                className="block text-sm sm:text-base font-medium text-black dark:text-white mb-1 sm:mb-2"
               >
                 Full Name <span className="text-red-500">*</span>
               </label>
@@ -166,16 +166,16 @@ function PersonalInfoForm({
                 value={data.fullName}
                 onChange={(e) => handleChange("fullName", e.target.value)}
                 placeholder="e.g. Muhammad Ali Khan"
-                className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-4 py-3 text-black dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition"
+                className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-3 sm:px-4 py-2 sm:py-3 text-black dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition"
               />
-              {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
+              {errors.fullName && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.fullName}</p>}
             </div>
 
             {/* CNIC */}
             <div>
               <label
                 htmlFor="cnic"
-                className="block text-sm font-medium text-black dark:text-white mb-2"
+                className="block text-sm sm:text-base font-medium text-black dark:text-white mb-1 sm:mb-2"
               >
                 National ID Card Number (CNIC)
               </label>
@@ -185,17 +185,17 @@ function PersonalInfoForm({
                 value={data.cnic}
                 onChange={(e) => handleChange("cnic", e.target.value)}
                 placeholder="XXXXX-XXXXXXX-X"
-                className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-4 py-3 text-black dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition"
+                className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-3 sm:px-4 py-2 sm:py-3 text-black dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition"
               />
-              {errors.cnic && <p className="text-red-500 text-sm mt-1">{errors.cnic}</p>}
+              {errors.cnic && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.cnic}</p>}
             </div>
 
             {/* Date of Birth & Gender */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label
                   htmlFor="dob"
-                  className="block text-sm font-medium text-black dark:text-white mb-2"
+                  className="block text-sm sm:text-base font-medium text-black dark:text-white mb-1 sm:mb-2"
                 >
                   Date of Birth
                 </label>
@@ -204,14 +204,14 @@ function PersonalInfoForm({
                   id="dob"
                   value={data.dob}
                   onChange={(e) => handleChange("dob", e.target.value)}
-                  className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-4 py-3 text-black dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition"
+                  className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-3 sm:px-4 py-2 sm:py-3 text-black dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition"
                 />
-                {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
+                {errors.dob && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.dob}</p>}
               </div>
               <div>
                 <label
                   htmlFor="gender"
-                  className="block text-sm font-medium text-black dark:text-white mb-2"
+                  className="block text-sm sm:text-base font-medium text-black dark:text-white mb-1 sm:mb-2"
                 >
                   Gender
                 </label>
@@ -219,7 +219,7 @@ function PersonalInfoForm({
                   id="gender"
                   value={data.gender}
                   onChange={(e) => handleChange("gender", e.target.value)}
-                  className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-4 py-3 text-black dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition"
+                  className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-3 sm:px-4 py-2 sm:py-3 text-black dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition"
                 >
                   <option value="">Select your gender</option>
                   <option value="Male">Male</option>
@@ -233,7 +233,7 @@ function PersonalInfoForm({
             <div>
               <label
                 htmlFor="address"
-                className="block text-sm font-medium text-black dark:text-white mb-2"
+                className="block text-sm sm:text-base font-medium text-black dark:text-white mb-1 sm:mb-2"
               >
                 Address
               </label>
@@ -243,7 +243,7 @@ function PersonalInfoForm({
                 onChange={(e) => handleChange("address", e.target.value)}
                 rows={3}
                 placeholder="e.g. House #123, Street 4, Islamabad"
-                className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-4 py-3 text-black dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition"
+                className="w-full rounded-lg border border-black/10 dark:border-white/20 bg-transparent px-3 sm:px-4 py-2 sm:py-3 text-black dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-primary focus:border-primary transition"
               ></textarea>
             </div>
           </form>
@@ -252,6 +252,7 @@ function PersonalInfoForm({
     </main>
   );
 }
+
 
 function AcademicInfoForm({ 
   data, 

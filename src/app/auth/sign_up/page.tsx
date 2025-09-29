@@ -9,17 +9,24 @@ interface FormData {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
+  cnic: string;
   password: string;
-  confirmPassword: string;
-  role: "student" | "teacher" | "parent" | "admin";
+  programLevel: "matric" | "intermediate" | "";
+  rollNumber?: string;
+  passingYear?: string;
+  boardName?: string;
+  marksObtained?: string;
+  totalMarks?: string;
 }
 
 interface Errors {
   firstName?: string;
   lastName?: string;
   email?: string;
+  phone?: string;
+  cnic?: string;
   password?: string;
-  confirmPassword?: string;
   form?: string;
 }
 
@@ -29,9 +36,10 @@ const SignUp: React.FC = () => {
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
+    cnic: "",
     password: "",
-    confirmPassword: "",
-    role: "student",
+    programLevel: "",
   });
   const [errors, setErrors] = useState<Errors>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -60,12 +68,15 @@ const SignUp: React.FC = () => {
         if (!value.trim()) fieldErrors.email = "Email is required";
         else if (!/\S+@\S+\.\S+/.test(value)) fieldErrors.email = "Email is invalid";
         break;
+      case "phone":
+        if (!value.trim()) fieldErrors.phone = "Phone number is required";
+        break;
+      case "cnic":
+        if (!value.trim()) fieldErrors.cnic = "CNIC / B-Form is required";
+        break;
       case "password":
         if (!value) fieldErrors.password = "Password is required";
         else if (value.length < 6) fieldErrors.password = "Password must be at least 6 characters";
-        break;
-      case "confirmPassword":
-        if (value !== formData.password) fieldErrors.confirmPassword = "Passwords do not match";
         break;
     }
     setErrors((prev) => ({ ...prev, ...fieldErrors }));
@@ -80,11 +91,11 @@ const SignUp: React.FC = () => {
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
 
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+    if (!formData.cnic.trim()) newErrors.cnic = "CNIC / B-Form is required";
+
     if (!formData.password) newErrors.password = "Password is required";
     else if (formData.password.length < 6) newErrors.password = "Password must be at least 6 characters";
-
-    if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -98,7 +109,8 @@ const SignUp: React.FC = () => {
 
     setTimeout(() => {
       const existingUsers = JSON.parse(localStorage.getItem("users") || "[]");
-      const newUser = { ...formData };
+
+      const newUser = { ...formData, role: "student" }; // ✅ Always student role
       existingUsers.push(newUser);
       localStorage.setItem("users", JSON.stringify(existingUsers));
 
@@ -122,7 +134,7 @@ const SignUp: React.FC = () => {
             </div>
             <div className="mt-12 w-full max-w-md">
               <Image
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp9-cWa2lhsPUWnE7C8_qaJ5vL_FqCa2QKYiMzbaW61sXStY8NSj0o-5h4mlY9-NCfshbJGlC4qJouyrbdwOdiadCD_2lbGDLnc1mXvlty4HtPQsy8gm1SNRC9irZUkWp0Yk442gWoR9Lw0CBPCuieZz5spThk5ODksYEDm_mhe_96Hzm8-CHmevE_nrtpeUFy8oD8ejYy06Wnwgkv2rvIeduDHKIl__QwtRtEcer5sdxrmHdQjvbr3E4eKtTj-5YwFgfOHsO4kSM" // Use your Next.js public folder image
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCp9-cWa2lhsPUWnE7C8_qaJ5vL_FqCa2QKYiMzbaW61sXStY8NSj0o-5h4mlY9-NCfshbJGlC4qJouyrbdwOdiadCD_2lbGDLnc1mXvlty4HtPQsy8gm1SNRC9irZUkWp0Yk442gWoR9Lw0CBPCuieZz5spThk5ODksYEDm_mhe_96Hzm8-CHmevE_nrtpeUFy8oD8ejYy06Wnwgkv2rvIeduDHKIl__QwtRtEcer5sdxrmHdQjvbr3E4eKtTj-5YwFgfOHsO4kSM"
                 alt="Welcoming illustration of diverse students"
                 width={500}
                 height={400}
@@ -143,89 +155,49 @@ const SignUp: React.FC = () => {
 
               <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <InputField
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    placeholder="First Name"
-                    error={errors.firstName}
-                  />
-                  <InputField
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder="Last Name"
-                    error={errors.lastName}
-                  />
+                  <InputField id="firstName" name="firstName" type="text" value={formData.firstName} onChange={handleChange} placeholder="First Name" error={errors.firstName} />
+                  <InputField id="lastName" name="lastName" type="text" value={formData.lastName} onChange={handleChange} placeholder="Last Name" error={errors.lastName} />
                 </div>
 
-                <InputField
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Email address"
-                  error={errors.email}
-                />
+                <InputField id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email address" error={errors.email} />
+                <InputField id="phone" name="phone" type="text" value={formData.phone} onChange={handleChange} placeholder="Phone number" error={errors.phone} />
+                <InputField id="cnic" name="cnic" type="text" value={formData.cnic} onChange={handleChange} placeholder="CNIC / B-Form" error={errors.cnic} />
 
-                <InputField
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Password"
-                  error={errors.password}
-                />
-
-                <InputField
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showPassword ? "text" : "password"}
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm Password"
-                  error={errors.confirmPassword}
-                />
+                <InputField id="password" name="password" type={showPassword ? "text" : "password"} value={formData.password} onChange={handleChange} placeholder="Password" error={errors.password} />
 
                 <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="showPassword"
-                    checked={showPassword}
-                    onChange={() => setShowPassword(!showPassword)}
-                    className="accent-blue-600"
-                  />
+                  <input type="checkbox" id="showPassword" checked={showPassword} onChange={() => setShowPassword(!showPassword)} className="accent-blue-600" />
                   <label htmlFor="showPassword" className="text-sm text-muted-light dark:text-muted-dark">
                     Show Password
                   </label>
                 </div>
 
-                {/* Role Selector with icon and info */}
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500">
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4Zm0 2c-2.67 0-8 1.34-8 4v2c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-2c0-2.66-5.33-4-8-4Z"/></svg>
-                  </span>
+                {/* Program Level */}
+                <div>
+                  <label className="block mb-1 text-sm">Select Program Level</label>
                   <select
-                    id="role"
-                    name="role"
-                    value={formData.role}
+                    id="programLevel"
+                    name="programLevel"
+                    value={formData.programLevel}
                     onChange={handleChange}
-                    className="w-full bg-input-light dark:bg-input-dark border border-border-light dark:border-border-dark rounded-full px-12 py-3.5 focus:ring-2 focus:ring-primary/50 focus:border-primary transition appearance-none pl-12"
+                    className="w-full bg-input-light dark:bg-input-dark border border-border-light dark:border-border-dark rounded-full px-4 py-3"
                   >
-                    <option value="student">Student (default)</option>
-                   
-                    <option value="admin">Administrator</option>
+                    <option value="">-- Select --</option>
+                    <option value="matric">Matric</option>
+                    <option value="intermediate">Intermediate</option>
                   </select>
-                  <p className="text-xs text-muted-light dark:text-muted-dark mt-1 ml-1">
-                    Most users should select <span className="font-semibold text-blue-600">Student</span>. <span className="font-semibold text-red-600">Administrator</span> is for school admins only.
-                  </p>
                 </div>
+
+                {/* Dynamic Fields */}
+                {formData.programLevel && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <InputField id="rollNumber" name="rollNumber" type="text" value={formData.rollNumber || ""} onChange={handleChange} placeholder="Roll Number" />
+                    <InputField id="passingYear" name="passingYear" type="text" value={formData.passingYear || ""} onChange={handleChange} placeholder="Passing Year" />
+                    <InputField id="boardName" name="boardName" type="text" value={formData.boardName || ""} onChange={handleChange} placeholder="Board Name" />
+                    <InputField id="marksObtained" name="marksObtained" type="text" value={formData.marksObtained || ""} onChange={handleChange} placeholder="Marks Obtained" />
+                    <InputField id="totalMarks" name="totalMarks" type="text" value={formData.totalMarks || ""} onChange={handleChange} placeholder="Total Marks" />
+                  </div>
+                )}
 
                 {errors.form && <p className="text-red-500 text-sm text-center">{errors.form}</p>}
                 {successMsg && <p className="text-green-500 text-sm text-center">{successMsg}</p>}
@@ -237,9 +209,6 @@ const SignUp: React.FC = () => {
                 >
                   {isLoading ? "Creating account..." : "Sign up"}
                 </button>
-
-
-                
               </form>
 
               <div className="text-center mt-6">

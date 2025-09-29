@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=optional"
         rel="stylesheet"
       />
-      <div className="flex h-screen">
+      <div className="flex h-screen mt-[5px]">
         {/* Mobile Sidebar Overlay */}
         {mobileOpen && (
           <aside className="fixed inset-0 z-50 bg-black/30 lg:hidden" onClick={() => setMobileOpen(false)} />

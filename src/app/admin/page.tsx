@@ -55,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
       {/* Mobile Overlay */}
       {mobileOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity"
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -63,20 +63,24 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
       {/* Sidebar */}
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-50
-        w-80 transform transition-all duration-300 ease-in-out
+        w-80 lg:w-64 xl:w-80 transform transition-all duration-300 ease-in-out
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        flex flex-col bg-white border-r border-gray-200 shadow-lg
+        flex flex-col bg-white border-r border-gray-200 shadow-lg lg:shadow-none
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 lg:p-6 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">EC</span>
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm lg:text-lg">EC</span>
               </div>
-              <div>
+              <div className="hidden lg:block">
                 <h1 className="text-xl font-semibold text-gray-900">EduConnect</h1>
                 <p className="text-sm text-gray-500">Admin Portal</p>
+              </div>
+              <div className="lg:hidden">
+                <h1 className="text-lg font-semibold text-gray-900">EduConnect</h1>
+                <p className="text-xs text-gray-500">Admin</p>
               </div>
             </div>
             <button 
@@ -88,57 +92,58 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
           </div>
 
           {/* User Profile */}
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-4 lg:p-6 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
-                <FiUser size={20} className="text-white" />
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
+                <FiUser size={18} className="text-white" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900 truncate">Admin User</p>
                 <p className="text-xs text-gray-500 truncate">admin@educonnect.com</p>
               </div>
-              <FiChevronDown size={16} className="text-gray-400" />
+              <FiChevronDown size={16} className="text-gray-400 hidden lg:block" />
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1">
+          <nav className="flex-1 p-3 lg:p-4 space-y-1">
             {menuItems.map((item, index) => (
               <Link
                 key={index}
                 href={item.href}
                 className={`
-                  flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative
+                  flex items-center gap-3 px-3 lg:px-4 py-3 rounded-xl transition-all duration-200 group relative
                   ${item.active 
                     ? 'bg-blue-50 text-blue-700 border border-blue-200' 
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }
                 `}
+                onClick={() => setMobileOpen(false)}
               >
                 <div className={`
-                  transition-colors
+                  transition-colors flex-shrink-0
                   ${item.active ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'}
                 `}>
                   {item.icon}
                 </div>
-                <span className="font-medium flex-1">{item.label}</span>
+                <span className="font-medium flex-1 text-sm lg:text-base">{item.label}</span>
                 {item.badge && (
                   <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full min-w-[24px] text-center">
                     {item.badge}
                   </span>
                 )}
                 {item.active && (
-                  <div className="w-1 h-6 bg-blue-600 rounded-full absolute right-4"></div>
+                  <div className="w-1 h-6 bg-blue-600 rounded-full absolute right-3 lg:right-4"></div>
                 )}
               </Link>
             ))}
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
-            <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 w-full transition-colors">
-              <FiLogOut size={20} className="text-gray-400" />
-              <span className="font-medium">Logout</span>
+          <div className="p-3 lg:p-4 border-t border-gray-200">
+            <button className="flex items-center gap-3 px-3 lg:px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 w-full transition-colors">
+              <FiLogOut size={20} className="text-gray-400 flex-shrink-0" />
+              <span className="font-medium text-sm lg:text-base">Logout</span>
             </button>
           </div>
         </div>
@@ -154,46 +159,55 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="flex items-center justify-between px-6 h-16">
-        <div className="flex items-center gap-4">
+    <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
+      <div className="flex items-center justify-between px-4 lg:px-6 h-16">
+        <div className="flex items-center gap-3">
           <button 
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={onMenuToggle}
           >
             <FiMenu size={20} className="text-gray-600" />
           </button>
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">Applicant Management</h1>
-            <p className="text-sm text-gray-500">Review and manage applications</p>
+          <div className="hidden sm:block">
+            <h1 className="text-lg lg:text-xl font-semibold text-gray-900">Applicant Management</h1>
+            <p className="text-xs lg:text-sm text-gray-500">Review and manage applications</p>
+          </div>
+          <div className="sm:hidden">
+            <h1 className="text-lg font-semibold text-gray-900">Applicants</h1>
+            <p className="text-xs text-gray-500">Admin Dashboard</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Search */}
+        <div className="flex items-center gap-2 lg:gap-4">
+          {/* Search - Hidden on mobile, visible on md and up */}
           <div className="relative hidden md:block">
             <div className="relative">
               <FiSearch size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search applicants..."
-                className="pl-10 pr-4 py-2.5 w-80 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="pl-10 pr-4 py-2.5 w-60 lg:w-80 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm lg:text-base"
               />
             </div>
           </div>
 
+          {/* Mobile Search Button */}
+          <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+            <FiSearch size={20} className="text-gray-600" />
+          </button>
+
           {/* Notifications */}
-          <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
             <FiBell size={20} className="text-gray-600" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
           {/* User Menu */}
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+          <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer min-h-[44px]">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
               <FiUser size={16} className="text-white" />
             </div>
-            <FiChevronDown size={16} className="text-gray-400" />
+            <FiChevronDown size={16} className="text-gray-400 hidden lg:block" />
           </div>
         </div>
       </div>
@@ -265,23 +279,23 @@ const StatsCards = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
       {stats.map((stat, index) => (
         <div 
           key={index} 
-          className="bg-white p-6 rounded-xl border border-gray-200 hover:shadow-md transition-shadow"
+          className="bg-white p-4 lg:p-6 rounded-xl border border-gray-200 hover:shadow-md transition-shadow"
         >
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 mb-2">{stat.title}</p>
-              <p className="text-2xl font-bold text-gray-900 mb-2">{stat.value}</p>
-              <div className={`flex items-center gap-1 text-sm font-medium ${
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-600 mb-1 lg:mb-2 truncate">{stat.title}</p>
+              <p className="text-xl lg:text-2xl font-bold text-gray-900 mb-1 lg:mb-2 truncate">{stat.value}</p>
+              <div className={`flex items-center gap-1 text-xs lg:text-sm font-medium ${
                 stat.trend === 'up' ? 'text-green-600' : 'text-red-600'
               }`}>
                 {stat.change} from last week
               </div>
             </div>
-            <div className={`p-3 rounded-lg ${getColorClasses(stat.color, 'bg')} ${getColorClasses(stat.color, 'border')}`}>
+            <div className={`p-2 lg:p-3 rounded-lg ${getColorClasses(stat.color, 'bg')} ${getColorClasses(stat.color, 'border')} flex-shrink-0 ml-3`}>
               <div className={getColorClasses(stat.color, 'text')}>
                 {stat.icon}
               </div>
@@ -333,22 +347,22 @@ const QuickActions = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 mb-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+    <div className="bg-white p-4 lg:p-6 rounded-xl border border-gray-200 mb-6">
+      <div className="flex items-center justify-between mb-4 lg:mb-6">
+        <h2 className="text-base lg:text-lg font-semibold text-gray-900">Quick Actions</h2>
+        <button className="text-xs lg:text-sm text-blue-600 hover:text-blue-700 font-medium">
           View all
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 lg:gap-4">
         {actions.map((action, index) => (
           <button
             key={index}
-            className={`p-4 rounded-lg text-white text-left transition-all hover:shadow-md ${getColorClasses(action.color)}`}
+            className={`p-3 lg:p-4 rounded-lg text-white text-left transition-all hover:shadow-md min-h-[100px] lg:min-h-[120px] ${getColorClasses(action.color)}`}
           >
-            <div className="mb-3">{action.icon}</div>
-            <p className="font-semibold mb-1">{action.label}</p>
-            <p className="text-white/80 text-sm">{action.description}</p>
+            <div className="mb-2 lg:mb-3">{action.icon}</div>
+            <p className="font-semibold mb-1 text-sm lg:text-base">{action.label}</p>
+            <p className="text-white/80 text-xs lg:text-sm leading-tight">{action.description}</p>
           </button>
         ))}
       </div>
@@ -429,8 +443,8 @@ export default function AdminDashboard() {
       <div className="flex-1 flex flex-col lg:ml-0 min-w-0">
         <Header onMenuToggle={() => setMobileOpen(!mobileOpen)} />
         
-        <main className="flex-1 p-6 overflow-y-auto">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 p-4 lg:p-6 overflow-y-auto">
+          <div className="max-w-7xl mx-auto w-full">
             {/* Stats Cards */}
             <StatsCards />
 
@@ -438,54 +452,56 @@ export default function AdminDashboard() {
             <QuickActions />
 
             {/* Filters and Search */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 mb-6">
+            <div className="bg-white p-4 lg:p-6 rounded-xl border border-gray-200 mb-6">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900 mb-1">Applicant List</h2>
-                  <p className="text-gray-600">Manage and review all applications</p>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-base lg:text-lg font-semibold text-gray-900 mb-1">Applicant List</h2>
+                  <p className="text-gray-600 text-sm lg:text-base">Manage and review all applications</p>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                   {/* Mobile Search */}
-                  <div className="lg:hidden relative">
+                  <div className="lg:hidden relative w-full">
                     <FiSearch size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
                       placeholder="Search applicants..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2.5 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      className="pl-10 pr-4 py-3 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base"
                     />
                   </div>
 
-                  <select
-                    className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    value={programFilter}
-                    onChange={(e) => setProgramFilter(e.target.value)}
-                  >
-                    <option>All Programs</option>
-                    <option>Computer Science</option>
-                    <option>Business Administration</option>
-                    <option>Engineering</option>
-                    <option>Psychology</option>
-                    <option>Biology</option>
-                  </select>
-                  
-                  <select
-                    className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                  >
-                    <option>All Statuses</option>
-                    <option>Pending</option>
-                    <option>Approved</option>
-                    <option>Rejected</option>
-                  </select>
+                  <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+                    <select
+                      className="px-3 lg:px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm lg:text-base w-full sm:w-auto"
+                      value={programFilter}
+                      onChange={(e) => setProgramFilter(e.target.value)}
+                    >
+                      <option>All Programs</option>
+                      <option>Computer Science</option>
+                      <option>Business Administration</option>
+                      <option>Engineering</option>
+                      <option>Psychology</option>
+                      <option>Biology</option>
+                    </select>
+                    
+                    <select
+                      className="px-3 lg:px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm lg:text-base w-full sm:w-auto"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                      <option>All Statuses</option>
+                      <option>Pending</option>
+                      <option>Approved</option>
+                      <option>Rejected</option>
+                    </select>
 
-                  <button className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium flex items-center gap-2 justify-center">
-                    <FiFilter size={16} />
-                    Filter
-                  </button>
+                    <button className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium flex items-center gap-2 justify-center text-sm lg:text-base min-h-[44px]">
+                      <FiFilter size={16} />
+                      <span className="hidden sm:inline">Filter</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -493,39 +509,39 @@ export default function AdminDashboard() {
             {/* Applicants Table */}
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               {/* Table Header */}
-              <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">
+              <div className="px-4 lg:px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <h3 className="text-base lg:text-lg font-semibold text-gray-900">
                     Applications ({filteredApplicants.length})
                   </h3>
-                  <button className="px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg transition-colors font-medium flex items-center gap-2">
+                  <button className="px-4 py-2.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg transition-colors font-medium flex items-center gap-2 justify-center text-sm lg:text-base min-h-[44px] w-full sm:w-auto">
                     <FiDownload size={16} />
                     Export CSV
                   </button>
                 </div>
               </div>
 
-              {/* Table */}
+              {/* Table Container with Horizontal Scroll */}
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[600px]">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Applicant
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Program
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Applied
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Score
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -533,63 +549,64 @@ export default function AdminDashboard() {
                   <tbody className="divide-y divide-gray-200">
                     {filteredApplicants.map((applicant) => (
                       <tr key={applicant.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center">
-                              <FiUser size={16} className="text-white" />
+                            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                              <FiUser size={14} className="text-white" />
                             </div>
-                            <div>
-                              <div className="font-medium text-gray-900">
+                            <div className="min-w-0">
+                              <div className="font-medium text-gray-900 text-sm lg:text-base truncate max-w-[120px] lg:max-w-none">
                                 {applicant.name}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-xs text-gray-500 truncate max-w-[120px] lg:max-w-none">
                                 {applicant.email}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">{applicant.program}</div>
                           <div className="text-xs text-gray-500">{applicant.id}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {applicant.appliedDate}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-2">
-                            <div className="w-16 bg-gray-200 rounded-full h-2">
+                            <div className="w-12 lg:w-16 bg-gray-200 rounded-full h-2 flex-shrink-0">
                               <div 
                                 className="bg-gradient-to-r from-blue-500 to-blue-700 h-2 rounded-full" 
                                 style={{ width: `${applicant.score}%` }}
                               ></div>
                             </div>
-                            <span className="text-sm font-medium text-gray-900">
+                            <span className="text-sm font-medium text-gray-900 whitespace-nowrap">
                               {applicant.score}%
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(applicant.status)}`}>
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
+                          <div className={`inline-flex items-center gap-1.5 px-2 lg:px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(applicant.status)}`}>
                             {getStatusIcon(applicant.status)}
-                            {applicant.status}
+                            <span className="hidden sm:inline">{applicant.status}</span>
+                            <span className="sm:hidden">{applicant.status.charAt(0)}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-1">
                             <button 
-                              className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+                              className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                               title="View details"
                             >
                               <FiEye size={16} />
                             </button>
                             <button 
-                              className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
+                              className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                               title="Edit application"
                             >
                               <FiEdit size={16} />
                             </button>
                             <button 
-                              className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                               title="Delete application"
                             >
                               <FiTrash2 size={16} />
@@ -603,20 +620,20 @@ export default function AdminDashboard() {
               </div>
 
               {/* Table Footer */}
-              <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
+              <div className="px-4 lg:px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="text-sm text-gray-600 text-center sm:text-left">
                     Showing <span className="font-medium">1</span> to <span className="font-medium">{filteredApplicants.length}</span> of{' '}
                     <span className="font-medium">{filteredApplicants.length}</span> results
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button className="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-1">
+                  <div className="flex items-center justify-center gap-2">
+                    <button className="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-1 text-sm min-h-[44px]">
                       Previous
                     </button>
-                    <button className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                    <button className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
                       1
                     </button>
-                    <button className="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-1">
+                    <button className="px-3 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-1 text-sm min-h-[44px]">
                       Next
                       <FiChevronRight size={16} />
                     </button>
