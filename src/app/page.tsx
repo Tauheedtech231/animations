@@ -23,7 +23,8 @@ import Image from 'next/image';
 const ModernCollegeHome = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const slideInterval = useRef<NodeJS.Timeout>();
+  const slideInterval = useRef<NodeJS.Timeout | null>(null);
+
   const contactFormRef = useRef<HTMLDivElement>(null);
 
   // Hero slider images
