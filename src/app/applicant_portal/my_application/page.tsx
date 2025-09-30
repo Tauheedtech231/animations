@@ -52,6 +52,43 @@ interface FormErrors {
   documents: Partial<{ cnicFile: string }>;
 }
 
+// Scholarship Rules Configuration
+interface ScholarshipRule {
+  minScore: number;
+  maxScore: number;
+  scholarship: string;
+  description: string;
+  color: string;
+  bgColor: string;
+}
+
+const scholarshipRules: ScholarshipRule[] = [
+  {
+    minScore: 85,
+    maxScore: 100,
+    scholarship: "50% Scholarship",
+    description: "Excellent! You qualify for our highest scholarship tier.",
+    color: "text-green-600",
+    bgColor: "bg-green-50 border-green-200"
+  },
+  {
+    minScore: 70,
+    maxScore: 84.99,
+    scholarship: "25% Scholarship",
+    description: "Great! You qualify for a partial scholarship.",
+    color: "text-blue-600",
+    bgColor: "bg-blue-50 border-blue-200"
+  },
+  {
+    minScore: 0,
+    maxScore: 69.99,
+    scholarship: "Not Eligible for Scholarship",
+    description: "Keep working hard! You can apply for other financial aid options.",
+    color: "text-gray-600",
+    bgColor: "bg-gray-50 border-gray-200"
+  }
+];
+
 // Validation functions (unchanged)
 const validatePersonalInfo = (data: PersonalInfo): Partial<PersonalInfo> => {
   const errors: Partial<PersonalInfo> = {};
@@ -89,6 +126,30 @@ const validateDocuments = (data: Documents): Partial<{ cnicFile: string }> => {
   const errors: Partial<{ cnicFile: string }> = {};
   if (!data.cnicFile) errors.cnicFile = "CNIC copy is required";
   return errors;
+};
+
+// Scholarship Calculator Function
+const calculateScholarship = (cgpa: string): ScholarshipRule => {
+  // Parse the CGPA/Percentage value
+  let numericScore: number;
+  
+  if (cgpa.includes('%')) {
+    // Handle percentage format (e.g., "85%")
+    numericScore = parseFloat(cgpa.replace('%', ''));
+  } else if (parseFloat(cgpa) <= 4.0) {
+    // Handle CGPA format (e.g., "3.5" out of 4.0)
+    numericScore = (parseFloat(cgpa) / 4.0) * 100;
+  } else {
+    // Handle percentage without % symbol or other formats
+    numericScore = parseFloat(cgpa);
+  }
+
+  // Find the matching scholarship rule
+  const rule = scholarshipRules.find(
+    rule => numericScore >= rule.minScore && numericScore <= rule.maxScore
+  );
+  
+  return rule || scholarshipRules[scholarshipRules.length - 1];
 };
 
 // LocalStorage key
@@ -276,11 +337,13 @@ function PersonalInfoForm({
 function AcademicInfoForm({ 
   data, 
   onChange, 
-  errors 
+  errors,
+  onNext 
 }: { 
   data: AcademicInfo; 
   onChange: (data: AcademicInfo) => void; 
-  errors: Partial<AcademicInfo>; 
+  errors: Partial<AcademicInfo>;
+  onNext: () => void; 
 }) {
   const handleChange = (field: keyof AcademicInfo, value: string) => {
     onChange({ ...data, [field]: value });
@@ -291,6 +354,11 @@ function AcademicInfoForm({
       ...data, 
       [field]: file ? file.name : null 
     });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onNext();
   };
 
   return (
@@ -305,12 +373,12 @@ function AcademicInfoForm({
               Academic Information
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Please provide your latest academic details.
+              Please provide your latest academic details for scholarship assessment.
             </p>
           </div>
         </div>
 
-        <form className="space-y-4 sm:space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
           {/* Qualification */}
           <div>
             <label
@@ -416,16 +484,19 @@ function AcademicInfoForm({
                 htmlFor="cgpa"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                CGPA / Percentage
+                CGPA / Percentage <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 id="cgpa"
                 value={data.cgpa}
                 onChange={(e) => handleChange("cgpa", e.target.value)}
-                placeholder="e.g. 3.5 / 80%"
+                placeholder="e.g. 3.5 or 85%"
                 className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Enter your CGPA (out of 4.0) or Percentage (with % symbol)
+              </p>
               {errors.cgpa && (
                 <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
                   <span>⚠</span> {errors.cgpa}
@@ -462,11 +533,146 @@ function AcademicInfoForm({
               </label>
             </div>
           </div>
+
+          {/* Submit Button */}
+          <div className="pt-4">
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              Check Scholarship Eligibility
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
 }
+
+// New Scholarship Calculator Component
+function ScholarshipCalculator({ 
+  academicInfo, 
+  onBack 
+}: { 
+  academicInfo: AcademicInfo;
+  onBack: () => void;
+}) {
+  const scholarshipResult = calculateScholarship(academicInfo.cgpa);
+
+  return (
+    <div className="w-full max-w-4xl mx-auto">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 md:p-8 space-y-6 shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full">
+            <span className="text-lg font-semibold text-purple-600 dark:text-purple-400">★</span>
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+              Scholarship Eligibility Result
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Based on your academic performance
+            </p>
+          </div>
+        </div>
+
+        {/* Academic Details Summary */}
+        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Your Academic Details
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="font-medium text-gray-700 dark:text-gray-300">Qualification:</span>
+              <p className="text-gray-600 dark:text-gray-400">{academicInfo.qualification || "Not provided"}</p>
+            </div>
+            <div>
+              <span className="font-medium text-gray-700 dark:text-gray-300">Institute:</span>
+              <p className="text-gray-600 dark:text-gray-400">{academicInfo.institute || "Not provided"}</p>
+            </div>
+            <div>
+              <span className="font-medium text-gray-700 dark:text-gray-300">Program:</span>
+              <p className="text-gray-600 dark:text-gray-400">{academicInfo.program || "Not provided"}</p>
+            </div>
+            <div>
+              <span className="font-medium text-gray-700 dark:text-gray-300">CGPA/Percentage:</span>
+              <p className="text-gray-600 dark:text-gray-400 font-semibold">{academicInfo.cgpa || "Not provided"}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Scholarship Result */}
+        <div className={`rounded-xl p-6 border-2 ${scholarshipResult.bgColor} ${scholarshipResult.color}`}>
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto shadow-lg">
+              {scholarshipResult.scholarship.includes("50%") ? (
+                <span className="text-2xl">🎓</span>
+              ) : scholarshipResult.scholarship.includes("25%") ? (
+                <span className="text-2xl">⭐</span>
+              ) : (
+                <span className="text-2xl">📚</span>
+              )}
+            </div>
+            
+            <div>
+              <h3 className={`text-2xl font-bold ${scholarshipResult.color} mb-2`}>
+                {scholarshipResult.scholarship}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {scholarshipResult.description}
+              </p>
+            </div>
+
+            {/* Scholarship Rules Info */}
+            <div className="bg-white/80 dark:bg-gray-800/80 rounded-lg p-4 mt-4">
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                Scholarship Criteria:
+              </h4>
+              <div className="space-y-2 text-sm">
+                {scholarshipRules.map((rule, index) => (
+                  <div 
+                    key={index}
+                    className={`flex items-center justify-between p-2 rounded ${
+                      rule.scholarship === scholarshipResult.scholarship ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                    }`}
+                  >
+                    <span className="text-gray-700 dark:text-gray-300">
+                      {rule.minScore}% - {rule.maxScore}%
+                    </span>
+                    <span className={`font-medium ${rule.color}`}>
+                      {rule.scholarship}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 pt-4">
+          <button
+            onClick={onBack}
+            className="flex-1 px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <span>←</span>
+            Edit Academic Details
+          </button>
+          
+        </div>
+
+        {/* Note */}
+        <div className="text-center pt-4">
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            * Scholarship is subject to verification of submitted documents and final approval by the scholarship committee.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ... (Keep the existing CourseSelectionForm, DocumentUploadForm, and ReviewSubmitForm components exactly as they were)
 
 function CourseSelectionForm({ 
   data, 
@@ -520,12 +726,17 @@ function CourseSelectionForm({
               onChange={(e) => handleChange("program", e.target.value)}
               className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
-              <option value="">Select a program</option>
-              <option value="Computer Science">Computer Science</option>
-              <option value="Software Engineering">Software Engineering</option>
-              <option value="Business Administration">Business Administration</option>
-              <option value="Electrical Engineering">Electrical Engineering</option>
-              <option value="Psychology">Psychology</option>
+             <option value="">Select a program</option>
+<option value="ICS">ICS </option>
+<option value="FSc Pre-Medical">F.Sc Pre-Medical</option>
+<option value="FSc Pre-Engineering">F.Sc Pre-Engineering</option>
+<option value="I.Com">I.Com (Intermediate in Commerce)</option>
+<option value="FA General Science">FA (General Science)</option>
+<option value="FA Arts">FA (Arts / Humanities)</option>
+<option value="F.A IT">FA (Information Technology)</option>
+<option value="B.Com">B.Com (Bachelor of Commerce)</option>
+<option value="BA">BA (Bachelor of Arts)</option>
+
             </select>
             {errors.program && (
               <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
@@ -962,6 +1173,7 @@ export default function MyApplicationsPage() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showScholarshipCalculator, setShowScholarshipCalculator] = useState(false);
 
   // Load form data from localStorage on component mount
   useEffect(() => {
@@ -1024,12 +1236,21 @@ export default function MyApplicationsPage() {
 
   const handleNext = () => {
     if (validateCurrentStep()) {
-      handleStepChange(Math.min(currentStep + 1, steps.length - 1));
+      if (currentStep === 1 && !showScholarshipCalculator) {
+        // After academic info, show scholarship calculator instead of going to next step
+        setShowScholarshipCalculator(true);
+      } else {
+        handleStepChange(Math.min(currentStep + 1, steps.length - 1));
+      }
     }
   };
 
   const handleBack = () => {
-    handleStepChange(Math.max(currentStep - 1, 0));
+    if (showScholarshipCalculator) {
+      setShowScholarshipCalculator(false);
+    } else {
+      handleStepChange(Math.max(currentStep - 1, 0));
+    }
   };
 
   const handleSubmit = () => {
@@ -1042,6 +1263,7 @@ export default function MyApplicationsPage() {
     setFormData(initialFormData);
     setCurrentStep(0);
     setIsSubmitted(false);
+    setShowScholarshipCalculator(false);
     setErrors({
       personalInfo: {},
       academicInfo: {},
@@ -1062,6 +1284,7 @@ export default function MyApplicationsPage() {
       data={formData.academicInfo}
       onChange={(data) => setFormData(prev => ({ ...prev, academicInfo: data }))}
       errors={errors.academicInfo}
+      onNext={handleNext}
     />,
     <CourseSelectionForm 
       key="step3" 
@@ -1109,115 +1332,169 @@ export default function MyApplicationsPage() {
     );
   }
 
-return (
-  <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 px-3 sm:px-6 lg:px-8">
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-6">
-          <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">
+  // Show Scholarship Calculator instead of academic form when triggered
+  if (showScholarshipCalculator) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 px-3 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-6">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center">
+                    <span className="text-purple-600 dark:text-purple-400 text-lg">★</span>
+                  </div>
+                  Scholarship Eligibility
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">
+                  Check your scholarship eligibility based on academic performance
+                </p>
+              </div>
+              <button
+                onClick={() => setShowScholarshipCalculator(false)}
+                className="px-3 sm:px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-all duration-200 flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
+              >
+                <span>←</span>
+                Back to Form
+              </button>
+            </div>
+          </div>
+
+          {/* Scholarship Calculator */}
+          <ScholarshipCalculator 
+            academicInfo={formData.academicInfo}
+            onBack={() => setShowScholarshipCalculator(false)}
+          />
+
+          {/* Continue Button */}
+          <div className="flex justify-center mt-6">
+            <button
+              onClick={() => {
+                setShowScholarshipCalculator(false);
+                handleStepChange(2); // Go to course selection
+              }}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-3"
+            >
+              Continue to Course Selection
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 px-3 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 mb-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-6">
+            <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">
   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center">
      <HiOutlineDocumentText className="text-blue-600 dark:text-blue-400 w-5 h-5 sm:w-6 sm:h-6" />
   </div>
   My Application
 </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">
-              Complete all {steps.length} steps to submit your application
-            </p>
+              <p className="text-gray-600 dark:text-gray-400 mt-1 sm:mt-2 text-sm sm:text-base">
+                Complete all {steps.length} steps to submit your application
+              </p>
+            </div>
+            <button
+              onClick={handleResetForm}
+              className="px-3 sm:px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-all duration-200 flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
+            >
+              <span>🔄</span>
+              Reset Form
+            </button>
           </div>
-          <button
-            onClick={handleResetForm}
-            className="px-3 sm:px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-all duration-200 flex items-center gap-1 sm:gap-2 text-sm sm:text-base"
-          >
-            <span>🔄</span>
-            Reset Form
-          </button>
+
+          {/* Progress Bar */}
+          <div className="mt-4 sm:mt-6">
+            <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
+              <span>Step {currentStep + 1} of {steps.length}</span>
+              <span>{Math.round(progressPercent)}% Complete</span>
+            </div>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded-full overflow-hidden">
+              <div
+                className="h-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${progressPercent}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Stepper */}
+          <div className="mt-4 sm:mt-6 overflow-x-auto">
+            <div className="flex items-center justify-between relative min-w-[320px] sm:min-w-full">
+              <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-700 -z-10"></div>
+
+              {steps.map((step, index) => (
+                <div key={index} className="flex flex-col items-center relative z-10 min-w-[40px] sm:min-w-auto">
+                  <button
+                    onClick={() => handleStepChange(index)}
+                    disabled={index > currentStep}
+                    className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full font-medium transition-all duration-300 ${
+                      index <= currentStep
+                        ? "bg-blue-600 text-white shadow-lg scale-110"
+                        : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
+                    } ${index < currentStep ? "hover:scale-105" : ""}`}
+                  >
+                    {index < currentStep ? "✓" : index + 1}
+                  </button>
+                  <p
+                    className={`mt-1 sm:mt-2 text-[9px] sm:text-xs font-medium text-center max-w-[40px] sm:max-w-none ${
+                      index <= currentStep
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-500 dark:text-gray-400"
+                    }`}
+                  >
+                    {step}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="mt-4 sm:mt-6">
-          <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 sm:mb-3">
-            <span>Step {currentStep + 1} of {steps.length}</span>
-            <span>{Math.round(progressPercent)}% Complete</span>
-          </div>
-          <div className="w-full bg-gray-200 dark:bg-gray-700 h-3 rounded-full overflow-hidden">
-            <div
-              className="h-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${progressPercent}%` }}
-            ></div>
-          </div>
+        {/* Step Content */}
+        <div className={`transition-all duration-300 transform ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
+          {stepComponents[currentStep]}
         </div>
 
-        {/* Stepper */}
-        <div className="mt-4 sm:mt-6 overflow-x-auto">
-          <div className="flex items-center justify-between relative min-w-[320px] sm:min-w-full">
-            <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-700 -z-10"></div>
-
-            {steps.map((step, index) => (
-              <div key={index} className="flex flex-col items-center relative z-10 min-w-[40px] sm:min-w-auto">
-                <button
-                  onClick={() => handleStepChange(index)}
-                  disabled={index > currentStep}
-                  className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full font-medium transition-all duration-300 ${
-                    index <= currentStep
-                      ? "bg-blue-600 text-white shadow-lg scale-110"
-                      : "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
-                  } ${index < currentStep ? "hover:scale-105" : ""}`}
-                >
-                  {index < currentStep ? "✓" : index + 1}
-                </button>
-                <p
-                  className={`mt-1 sm:mt-2 text-[9px] sm:text-xs font-medium text-center max-w-[40px] sm:max-w-none ${
-                    index <= currentStep
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-gray-500 dark:text-gray-400"
-                  }`}
-                >
-                  {step}
-                </p>
-              </div>
-            ))}
+        {/* Navigation Buttons */}
+        {currentStep !== 1 && ( // Hide default navigation on academic info step
+          <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-3 sm:gap-4">
+            <button
+              onClick={handleBack}
+              disabled={currentStep === 0}
+              className="w-full sm:w-auto px-5 py-2 sm:px-6 sm:py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-50 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 font-medium disabled:cursor-not-allowed"
+            >
+              <span>←</span>
+              Back
+            </button>
+            
+            {currentStep < steps.length - 1 ? (
+              <button
+                onClick={handleNext}
+                className="w-full sm:w-auto px-5 py-2 sm:px-6 sm:py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                Next
+                <span>→</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleNext}
+                className="w-full sm:w-auto px-5 py-2 sm:px-6 sm:py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <span>✓</span>
+                Submit Application
+              </button>
+            )}
           </div>
-        </div>
-      </div>
-
-      {/* Step Content */}
-      <div className={`transition-all duration-300 transform ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-        {stepComponents[currentStep]}
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-3 sm:gap-4">
-        <button
-          onClick={handleBack}
-          disabled={currentStep === 0}
-          className="w-full sm:w-auto px-5 py-2 sm:px-6 sm:py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-50 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 font-medium disabled:cursor-not-allowed"
-        >
-          <span>←</span>
-          Back
-        </button>
-        
-        {currentStep < steps.length - 1 ? (
-          <button
-            onClick={handleNext}
-            className="w-full sm:w-auto px-5 py-2 sm:px-6 sm:py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            Next
-            <span>→</span>
-          </button>
-        ) : (
-          <button
-            onClick={handleNext}
-            className="w-full sm:w-auto px-5 py-2 sm:px-6 sm:py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            <span>✓</span>
-            Submit Application
-          </button>
         )}
       </div>
     </div>
-  </div>
-);
-
+  );
 }

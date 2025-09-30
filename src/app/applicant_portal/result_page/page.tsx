@@ -164,33 +164,36 @@ const ResultsPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-6 px-4 sm:px-6 md:px-8 font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Welcome Section */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-3">
-            Welcome to ACME University! 🎓
-          </h1>
-          <p className="text-gray-700 text-base sm:text-lg md:text-xl mb-6">
-            We are thrilled to have you join our vibrant community. Your journey begins now!
-          </p>
-          <div className="bg-white rounded-3xl shadow-xl p-5 sm:p-6 md:p-8 max-w-3xl mx-auto text-sm sm:text-base">
-            <div className="grid sm:grid-cols-3 gap-5 text-center">
-              <div>
-                <p className="text-gray-500">Program</p>
-                <p className="font-semibold text-gray-900">BS in Computer Science</p>
-              </div>
-              <div>
-                <p className="text-gray-500">Student ID</p>
-                <p className="font-semibold text-gray-900">STU2025-001</p>
-              </div>
-              <div>
-                <p className="text-gray-500">Semester</p>
-                <p className="font-semibold text-gray-900">Fall 2025</p>
-              </div>
-            </div>
-            <p className="text-gray-500 mt-4">
-              Remember to check your email for enrollment steps.
-            </p>
-          </div>
-        </div>
+     <div className="text-center mb-10">
+  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-3">
+    Welcome to Aspire College! 🎓
+  </h1>
+  <p className="text-gray-700 text-base sm:text-lg md:text-xl mb-6">
+    We are proud to have you join our community of excellence. 
+    Your academic journey towards success starts here!
+  </p>
+
+  <div className="bg-white rounded-3xl shadow-xl p-5 sm:p-6 md:p-8 max-w-3xl mx-auto text-sm sm:text-base">
+    <div className="grid sm:grid-cols-3 gap-5 text-center">
+      <div>
+        <p className="text-gray-500">Program</p>
+        <p className="font-semibold text-gray-900">Intermediate in Pre-Engineering</p>
+      </div>
+      <div>
+        <p className="text-gray-500">Student ID</p>
+        <p className="font-semibold text-gray-900">ASP2025-001</p>
+      </div>
+      <div>
+        <p className="text-gray-500">Session</p>
+        <p className="font-semibold text-gray-900">Fall 2025</p>
+      </div>
+    </div>
+    <p className="text-gray-500 mt-4">
+      Please check your email for enrollment guidelines and orientation details.  
+    </p>
+  </div>
+</div>
+
 
         {/* Main Grid */}
         <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">

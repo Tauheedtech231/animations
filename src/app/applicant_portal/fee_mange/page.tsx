@@ -329,7 +329,7 @@ const FeePayment = () => {
                   <FiBook className="w-4 h-4 text-blue-400" />
                   <div className="text-sm">
                     <p className="text-gray-500">Program</p>
-                    <p className="font-medium text-gray-900">BSCS Computer Science</p>
+                    <p className="font-medium text-gray-900">FSC Pre-Engineering</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

@@ -50,35 +50,36 @@ if (storedData) {
   console.log(parsedData.name); // "John"
 }
   },[])
-  const [applications, setApplications] = useState<Application[]>([
-    {
-      id: "APP2024-001",
-      program: "Computer Science",
-      status: "Submitted",
-      statusColor: "bg-yellow-100 text-yellow-800 border border-yellow-200",
-      submittedDate: "2024-01-15",
-      lastUpdated: "2024-01-15",
-      documents: ["Transcript", "Personal Statement", "Recommendation Letter"]
-    },
-    {
-      id: "APP2024-002",
-      program: "Electrical Engineering",
-      status: "In Review",
-      statusColor: "bg-blue-100 text-blue-800 border border-blue-200",
-      submittedDate: "2024-01-10",
-      lastUpdated: "2024-01-18",
-      documents: ["Transcript", "CV", "Research Proposal"]
-    },
-    {
-      id: "APP2024-003",
-      program: "Mechanical Engineering",
-      status: "Accepted",
-      statusColor: "bg-green-100 text-green-800 border border-green-200",
-      submittedDate: "2024-01-05",
-      lastUpdated: "2024-01-20",
-      documents: ["Transcript", "Portfolio", "Recommendation Letters"]
-    },
-  ]);
+const [applications, setApplications] = useState<Application[]>([
+  {
+    id: "APP2024-001",
+    program: "ICS ",
+    status: "Submitted",
+    statusColor: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+    submittedDate: "2024-01-15",
+    lastUpdated: "2024-01-15",
+    documents: ["Transcript", "Character Certificate", "B-Form Copy"]
+  },
+  {
+    id: "APP2024-002",
+    program: "F.Sc Pre-Medical",
+    status: "In Review",
+    statusColor: "bg-blue-100 text-blue-800 border border-blue-200",
+    submittedDate: "2024-01-10",
+    lastUpdated: "2024-01-18",
+    documents: ["Transcript", "CNIC/B-Form", "Passport Size Photos"]
+  },
+  {
+    id: "APP2024-003",
+    program: "I.Com ",
+    status: "Accepted",
+    statusColor: "bg-green-100 text-green-800 border border-green-200",
+    submittedDate: "2024-01-05",
+    lastUpdated: "2024-01-20",
+    documents: ["Transcript", "Character Certificate", "Domicile"]
+  },
+]);
+
 
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
