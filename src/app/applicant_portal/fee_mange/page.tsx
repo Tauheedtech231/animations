@@ -370,14 +370,14 @@ const FeePayment = () => {
   const selectedMethod = paymentMethods.find(method => method.id === selectedPaymentType);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-6 px-3 sm:px-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 py-6 px-3 sm:px-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1 sm:mb-2">
             Fee Payment Portal
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Secure and convenient fee payment options for EDUCO University students
           </p>
         </div>
@@ -385,9 +385,9 @@ const FeePayment = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Payment Section */}
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-200/50">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-200/50 dark:border-gray-700/50">
               {/* Toggle */}
-              <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 bg-gray-100 p-1 rounded-xl">
+              <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
                 <button
                   onClick={() => {
                     setPaymentMethod("online");
@@ -398,8 +398,8 @@ const FeePayment = () => {
                   }}
                   className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 ${
                     paymentMethod === "online"
-                      ? "bg-blue-600 text-white shadow-lg border border-blue-200"
-                      : "text-gray-600 hover:text-gray-800"
+                      ? "bg-blue-600 text-white shadow-lg border border-blue-200 dark:border-blue-700"
+                      : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                   }`}
                 >
                   Online Payment
@@ -414,8 +414,8 @@ const FeePayment = () => {
                   }}
                   className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 ${
                     paymentMethod === "offline"
-                      ? "bg-blue-600 text-white shadow-lg border border-blue-200"
-                      : "text-gray-600 hover:text-gray-800"
+                      ? "bg-blue-600 text-white shadow-lg border border-blue-200 dark:border-blue-700"
+                      : "text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                   }`}
                 >
                   Offline Payment
@@ -424,7 +424,7 @@ const FeePayment = () => {
 
               {paymentMethod === "online" ? (
                 <div className="space-y-4 sm:space-y-6">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
                     Select Payment Method
                   </h3>
                   
@@ -436,30 +436,30 @@ const FeePayment = () => {
                         onClick={() => setSelectedPaymentType(method.id)}
                         className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
                           selectedPaymentType === method.id
-                            ? "border-blue-500 bg-blue-50 shadow-lg"
-                            : "border-gray-200 bg-white hover:border-blue-300"
+                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg"
+                            : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-500"
                         }`}
                       >
                         <div className="flex items-center gap-3 sm:gap-4">
                           <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center transition-colors ${
                             selectedPaymentType === method.id
                               ? "bg-blue-500 text-white"
-                              : "bg-blue-100 text-blue-600"
+                              : "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                           }`}>
                             {method.icon}
                           </div>
                           <div className="flex-1">
-                            <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                            <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
                               {method.name}
                             </p>
-                            <p className="text-xs sm:text-sm text-gray-600">
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                               {method.description}
                             </p>
                           </div>
                           <div className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
                             selectedPaymentType === method.id
                               ? "bg-blue-500 border-blue-500"
-                              : "border-gray-300"
+                              : "border-gray-300 dark:border-gray-600"
                           }`}>
                             {selectedPaymentType === method.id && (
                               <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-white rounded-full" />
@@ -470,8 +470,8 @@ const FeePayment = () => {
                         {/* Dynamic Form */}
                         {selectedPaymentType === method.id && (
                           <div className="mt-4 pl-0 sm:pl-14">
-                            <div className="bg-gray-50 rounded-xl p-4 space-y-3 animate-fadeIn">
-                              <h4 className="font-semibold text-gray-900 text-sm sm:text-base flex items-center gap-2">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 space-y-3 animate-fadeIn">
+                              <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base flex items-center gap-2">
                                 <FiLock className="w-4 h-4 text-green-500" />
                                 Secure Payment Details
                               </h4>
@@ -481,7 +481,7 @@ const FeePayment = () => {
                                     key={field.name}
                                     className={field.name === "cardHolderName" || field.name === "pin" ? "sm:col-span-2" : ""}
                                   >
-                                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                                    <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                                       {field.label}
                                     </label>
                                     <input
@@ -490,7 +490,7 @@ const FeePayment = () => {
                                       value={formData[field.name as keyof typeof formData]}
                                       onChange={handleInputChange}
                                       placeholder={field.placeholder}
-                                      className="w-full p-3 rounded-lg border border-gray-300 text-gray-900 text-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                                      className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 dark:bg-gray-700 text-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
                                     />
                                   </div>
                                 ))}
@@ -508,7 +508,7 @@ const FeePayment = () => {
                     disabled={isProcessing || !selectedPaymentType}
                     className={`w-full py-3 sm:py-4 font-semibold rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base ${
                       isProcessing || !selectedPaymentType
-                        ? "bg-gray-400 cursor-not-allowed text-gray-700"
+                        ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-gray-700 dark:text-gray-300"
                         : "bg-blue-600 hover:bg-blue-700 text-white hover:shadow-xl transform hover:scale-[1.02]"
                     }`}
                   >
@@ -525,7 +525,7 @@ const FeePayment = () => {
                     )}
                   </button>
 
-                  <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-600">
+                  <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     <FiShield className="w-4 h-4 text-green-500" />
                     Your payment is secure and encrypted with SSL technology
                   </div>
@@ -533,8 +533,8 @@ const FeePayment = () => {
               ) : (
                 <div className="space-y-4 sm:space-y-6">
                   {/* Application ID Input */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
                       <FiUser className="w-5 h-5 text-blue-500" />
                       Enter Application ID
                     </h3>
@@ -544,9 +544,9 @@ const FeePayment = () => {
                         value={applicationId}
                         onChange={handleApplicationIdChange}
                         placeholder="Enter your Application ID (e.g., APP-123456-ABC)"
-                        className="w-full p-3 rounded-lg border border-gray-300 text-gray-900 text-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                        className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 dark:bg-gray-700 text-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
                       />
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
                         You can find your Application ID in your application confirmation email or in the student portal.
                       </p>
                     </div>
@@ -554,38 +554,38 @@ const FeePayment = () => {
 
                   {/* Error Message */}
                   {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-fadeIn">
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 animate-fadeIn">
                       <div className="flex items-center gap-3">
                         <FiAlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                        <p className="text-sm text-red-700">{error}</p>
+                        <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
                       </div>
                     </div>
                   )}
 
                   {/* Application Details */}
                   {applicationData && !error && (
-                    <div className="bg-green-50 border border-green-200 rounded-xl p-4 animate-fadeIn">
-                      <h4 className="font-semibold text-green-800 text-sm sm:text-base mb-3 flex items-center gap-2">
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 animate-fadeIn">
+                      <h4 className="font-semibold text-green-800 dark:text-green-400 text-sm sm:text-base mb-3 flex items-center gap-2">
                         <FiUser className="w-4 h-4" />
                         Application Found
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <span className="text-green-700">Student:</span>
-                          <p className="font-medium text-green-900">{applicationData.personalInfo.fullName}</p>
+                          <span className="text-green-700 dark:text-green-400">Student:</span>
+                          <p className="font-medium text-green-900 dark:text-green-300">{applicationData.personalInfo.fullName}</p>
                         </div>
                         <div>
-                          <span className="text-green-700">Program:</span>
-                          <p className="font-medium text-green-900">{applicationData.courseSelection.program}</p>
+                          <span className="text-green-700 dark:text-green-400">Program:</span>
+                          <p className="font-medium text-green-900 dark:text-green-300">{applicationData.courseSelection.program}</p>
                         </div>
                         <div>
-                          <span className="text-green-700">Academic Level:</span>
-                          <p className="font-medium text-green-900">{applicationData.academicInfo.academicLevel}</p>
+                          <span className="text-green-700 dark:text-green-400">Academic Level:</span>
+                          <p className="font-medium text-green-900 dark:text-green-300">{applicationData.academicInfo.academicLevel}</p>
                         </div>
                         {applicationData.feeDetails && (
                           <div>
-                            <span className="text-green-700">Scholarship:</span>
-                            <p className="font-medium text-green-900">{applicationData.feeDetails.scholarshipPercentage}%</p>
+                            <span className="text-green-700 dark:text-green-400">Scholarship:</span>
+                            <p className="font-medium text-green-900 dark:text-green-300">{applicationData.feeDetails.scholarshipPercentage}%</p>
                           </div>
                         )}
                       </div>
@@ -594,17 +594,17 @@ const FeePayment = () => {
 
                   {/* Download Challan Section */}
                   <div className="text-center space-y-4">
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                      <FiDownload className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto">
+                      <FiDownload className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600 dark:text-blue-400" />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
                       Download Fee Challan
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto">
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-md mx-auto">
                       Download the fee challan and submit it at any designated bank branch along with your payment.
                     </p>
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 max-w-md mx-auto">
-                      <p className="text-sm text-yellow-800 font-medium">
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4 max-w-md mx-auto">
+                      <p className="text-sm text-yellow-800 dark:text-yellow-400 font-medium">
                         📅 Due Date: September 30, 2025
                       </p>
                     </div>
@@ -613,7 +613,7 @@ const FeePayment = () => {
                       disabled={!applicationData || !!error}
                       className={`w-full max-w-sm mx-auto py-3 sm:py-4 font-semibold rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base ${
                         !applicationData || !!error
-                          ? "bg-gray-400 cursor-not-allowed text-gray-700"
+                          ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-gray-700 dark:text-gray-300"
                           : "bg-green-600 hover:bg-green-700 text-white hover:shadow-xl transform hover:scale-[1.02]"
                       }`}
                     >
@@ -629,12 +629,12 @@ const FeePayment = () => {
           {/* Sidebar */}
           <div className="space-y-4 sm:space-y-6">
             {/* Student Info */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-4 sm:p-6">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-4 sm:p-6">
+              <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4 flex items-center gap-2">
                 <FiUser className="w-4 h-4 text-blue-500" />
                 {applicationData ? "Application Information" : "Student Information"}
               </h3>
-              <div className="space-y-3 text-gray-700">
+              <div className="space-y-3 text-gray-700 dark:text-gray-300">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                     {applicationData ? 
@@ -643,8 +643,8 @@ const FeePayment = () => {
                     }
                   </div>
                   <div className="text-sm">
-                    <p className="text-gray-500">Name</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="text-gray-500 dark:text-gray-400">Name</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">
                       {applicationData ? applicationData.personalInfo.fullName : "John Doe"}
                     </p>
                   </div>
@@ -652,8 +652,8 @@ const FeePayment = () => {
                 <div className="flex items-center gap-3">
                   <FiBook className="w-4 h-4 text-blue-400" />
                   <div className="text-sm">
-                    <p className="text-gray-500">Program</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="text-gray-500 dark:text-gray-400">Program</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">
                       {applicationData ? applicationData.courseSelection.program : "FSC Pre-Engineering"}
                     </p>
                   </div>
@@ -661,8 +661,8 @@ const FeePayment = () => {
                 <div className="flex items-center gap-3">
                   <FiCalendar className="w-4 h-4 text-blue-400" />
                   <div className="text-sm">
-                    <p className="text-gray-500">Academic Level</p>
-                    <p className="font-medium text-gray-900">
+                    <p className="text-gray-500 dark:text-gray-400">Academic Level</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">
                       {applicationData ? applicationData.academicInfo.academicLevel : "Intermediate"}
                     </p>
                   </div>
@@ -671,8 +671,8 @@ const FeePayment = () => {
                   <div className="flex items-center gap-3">
                     <FiDollarSign className="w-4 h-4 text-green-400" />
                     <div className="text-sm">
-                      <p className="text-gray-500">Scholarship</p>
-                      <p className="font-medium text-green-600">
+                      <p className="text-gray-500 dark:text-gray-400">Scholarship</p>
+                      <p className="font-medium text-green-600 dark:text-green-400">
                         {applicationData.feeDetails.scholarshipPercentage}% Approved
                       </p>
                     </div>
@@ -682,8 +682,8 @@ const FeePayment = () => {
             </div>
 
             {/* Fee Summary */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-4 sm:p-6">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-4 sm:p-6">
+              <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4 flex items-center gap-2">
                 <FiDollarSign className="w-4 h-4 text-green-500" />
                 Fee Summary
               </h3>
@@ -691,20 +691,20 @@ const FeePayment = () => {
                 {applicationData?.feeDetails ? (
                   <>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Original Fee</span>
-                      <span className="font-medium text-gray-900">
+                      <span className="text-gray-600 dark:text-gray-400">Original Fee</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">
                         PKR {applicationData.feeDetails.originalFee.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-green-600">Scholarship Discount</span>
-                      <span className="font-medium text-green-600">
+                      <span className="text-green-600 dark:text-green-400">Scholarship Discount</span>
+                      <span className="font-medium text-green-600 dark:text-green-400">
                         -PKR {applicationData.feeDetails.scholarshipAmount.toLocaleString()}
                       </span>
                     </div>
-                    <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center font-bold text-base">
-                      <span className="text-gray-900">Final Payable</span>
-                      <span className="text-blue-600">
+                    <div className="border-t border-gray-200 dark:border-gray-700 mt-3 pt-3 flex justify-between items-center font-bold text-base">
+                      <span className="text-gray-900 dark:text-gray-100">Final Payable</span>
+                      <span className="text-blue-600 dark:text-blue-400">
                         PKR {applicationData.feeDetails.finalFee.toLocaleString()}
                       </span>
                     </div>
@@ -718,15 +718,15 @@ const FeePayment = () => {
                       { name: "Sports Fee", amount: feeDetails.sports },
                     ].map((fee, idx) => (
                       <div key={idx} className="flex justify-between items-center">
-                        <span className="text-gray-600">{fee.name}</span>
-                        <span className="font-medium text-gray-900">
+                        <span className="text-gray-600 dark:text-gray-400">{fee.name}</span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">
                           PKR {fee.amount.toLocaleString()}
                         </span>
                       </div>
                     ))}
-                    <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center font-bold text-base">
-                      <span className="text-gray-900">Total Payable</span>
-                      <span className="text-blue-600">
+                    <div className="border-t border-gray-200 dark:border-gray-700 mt-3 pt-3 flex justify-between items-center font-bold text-base">
+                      <span className="text-gray-900 dark:text-gray-100">Total Payable</span>
+                      <span className="text-blue-600 dark:text-blue-400">
                         PKR {feeDetails.total.toLocaleString()}
                       </span>
                     </div>
@@ -736,28 +736,28 @@ const FeePayment = () => {
             </div>
 
             {/* Payment Status */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-4 sm:p-6">
-              <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-4 sm:p-6">
+              <h3 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4 flex items-center gap-2">
                 <FiCalendar className="w-4 h-4 text-orange-500" />
                 Payment Status
               </h3>
-              <div className="space-y-3 text-sm text-gray-700">
+              <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
                 <div className="flex justify-between items-center">
                   <span>Due Date</span>
-                  <span className="font-medium text-gray-900">Sep 30, 2025</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Sep 30, 2025</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Status</span>
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                     applicationData?.paymentStatus === "paid" 
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
+                      ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+                      : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400"
                   }`}>
                     {applicationData?.paymentStatus === "paid" ? "✅ Paid" : "⏳ Pending"}
                   </span>
                 </div>
-                <div className="bg-blue-50 rounded-lg p-3 mt-2">
-                  <p className="text-xs text-blue-700 text-center">
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 mt-2">
+                  <p className="text-xs text-blue-700 dark:text-blue-400 text-center">
                     Complete payment before due date to avoid late fees of PKR 2,000
                   </p>
                 </div>

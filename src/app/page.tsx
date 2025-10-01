@@ -94,125 +94,125 @@ const ModernCollegeHome = () => {
   return (
     <div className="min-h-screen bg-white font-sans overflow-x-hidden">
       {/* Hero Section with Slider */}
-      <section className="relative h-screen overflow-hidden">
-        <div className="relative w-full h-full">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentSlide}
-              className="absolute inset-0 w-full h-full"
-              initial={{ x: "100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-            >
-              <Image
-                src={slides[currentSlide].image}
-                alt={slides[currentSlide].title}
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-black/50" />
-              
-              <div className="absolute inset-0 flex items-center justify-center text-center text-white">
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="max-w-4xl mx-auto px-4"
-                >
-                  <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                    {slides[currentSlide].title}
-                  </h1>
-                  <p className="text-xl md:text-2xl mb-6 text-blue-200 font-semibold">
-                    {slides[currentSlide].subtitle}
-                  </p>
-                  <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-                    {slides[currentSlide].description}
-                  </p>
+     <section className="relative h-screen overflow-hidden bg-gray-900 dark:bg-gray-900">
+  <div className="relative w-full h-full">
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={currentSlide}
+        className="absolute inset-0 w-full h-full"
+        initial={{ x: "100%", opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: "-100%", opacity: 0 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+      >
+        <Image
+          src={slides[currentSlide].image}
+          alt={slides[currentSlide].title}
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/60 dark:bg-black/70" />
 
-                  {/* 👇 Buttons hidden on mobile */}
-                 <div className="flex gap-4 justify-center">
-  {/* Explore Programs → Mobile & Desktop dono par */}
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={scrollToCourses}
-    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
-               text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-base sm:text-lg shadow-2xl transition-all"
-  >
-    Explore Programs
-  </motion.button>
+        {/* Text Content */}
+        <div className="absolute inset-0 flex items-center justify-center text-center text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="max-w-4xl mx-auto px-4"
+          >
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white dark:text-gray-100">
+              {slides[currentSlide].title}
+            </h1>
+            <p className="text-xl md:text-2xl mb-6 text-blue-200 dark:text-blue-300 font-semibold">
+              {slides[currentSlide].subtitle}
+            </p>
+            <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-gray-100 dark:text-gray-200">
+              {slides[currentSlide].description}
+            </p>
 
-  {/* Contact Now → Sirf Desktop par */}
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={scrollToContact}
-    className="hidden sm:block border-2 border-white hover:bg-white/10 text-white 
-               px-8 py-4 rounded-lg font-semibold backdrop-blur-sm transition-all"
-  >
-    Contact Now
-  </motion.button>
-</div>
-
-                </motion.div>
-              </div>
-
-              {/* Scroll Down Indicator */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 1 }}
-                className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+            {/* Buttons */}
+            <div className="flex gap-4 justify-center flex-wrap">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={scrollToCourses}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
+                           text-white dark:text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-base sm:text-lg shadow-2xl transition-all"
               >
-                <motion.button
-                  onClick={scrollToCourses}
-                  animate={{ y: [0, 10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-white hover:text-blue-200 transition-colors"
-                >
-                  <FiArrowDown className="w-8 h-8" />
-                </motion.button>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
+                Explore Programs
+              </motion.button>
 
-          {/* Slider Controls */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 
-                       backdrop-blur-sm rounded-full p-3 transition-all duration-300"
-          >
-            <FiChevronLeft className="w-6 h-6 text-white" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 
-                       backdrop-blur-sm rounded-full p-3 transition-all duration-300"
-          >
-            <FiChevronRight className="w-6 h-6 text-white" />
-          </button>
-
-          {/* Slider Indicators */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  index === currentSlide ? 'bg-white' : 'bg-white/50'
-                }`}
-              />
-            ))}
-          </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={scrollToContact}
+                className="hidden sm:block border-2 border-white dark:border-gray-300 hover:bg-white/10 dark:hover:bg-gray-300/10 
+                           text-white dark:text-gray-300 px-8 py-4 rounded-lg font-semibold backdrop-blur-sm transition-all"
+              >
+                Contact Now
+              </motion.button>
+            </div>
+          </motion.div>
         </div>
-      </section>
+
+        {/* Scroll Down Indicator */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        >
+          <motion.button
+            onClick={scrollToCourses}
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-white dark:text-gray-200 hover:text-blue-200 dark:hover:text-blue-300 transition-colors"
+          >
+            <FiArrowDown className="w-8 h-8" />
+          </motion.button>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+
+    {/* Slider Controls */}
+    <button
+      onClick={prevSlide}
+      className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 dark:bg-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-700/50 
+                 backdrop-blur-sm rounded-full p-3 transition-all duration-300"
+    >
+      <FiChevronLeft className="w-6 h-6 text-white dark:text-gray-100" />
+    </button>
+    <button
+      onClick={nextSlide}
+      className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 dark:bg-gray-700/30 hover:bg-white/30 dark:hover:bg-gray-700/50 
+                 backdrop-blur-sm rounded-full p-3 transition-all duration-300"
+    >
+      <FiChevronRight className="w-6 h-6 text-white dark:text-gray-100" />
+    </button>
+
+    {/* Slider Indicators */}
+    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+      {slides.map((_, index) => (
+        <button
+          key={index}
+          onClick={() => goToSlide(index)}
+          className={`w-3 h-3 rounded-full transition-all duration-300 ${
+            index === currentSlide ? "bg-white dark:bg-gray-100" : "bg-white/50 dark:bg-gray-400/50"
+          }`}
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
 
 
 
       {/* About Section */}
-     <section id="about" className="py-20 bg-gray-50">
+<section id="about" className="py-20 bg-gray-50 dark:bg-gray-900">
   <div className="container mx-auto px-4">
     <div className="grid lg:grid-cols-2 gap-12 items-center">
       {/* Text Section */}
@@ -222,16 +222,16 @@ const ModernCollegeHome = () => {
         transition={{ duration: 0.7 }}
         viewport={{ once: true }}
       >
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-6">
           About College
         </h2>
-        <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
           Aspire College is a premier educational institution dedicated to providing 
           top-quality education that empowers students to excel academically and evolve 
           into responsible, capable individuals. Our modern campus and expert faculty 
           create a vibrant learning environment.
         </p>
-        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
           Our mission is to foster innovation, critical thinking, and holistic development, 
           preparing students for higher education and professional success.
         </p>
@@ -254,22 +254,22 @@ const ModernCollegeHome = () => {
         className="grid grid-cols-2 gap-6"
       >
         {[
-          { icon: FiUsers, bg: "bg-blue-100", color: "text-blue-600", number: "2000+", label: "Students Enrolled" },
-          { icon: FiAward, bg: "bg-green-100", color: "text-green-600", number: "98%", label: "Success Rate" },
-          { icon: FiBook, bg: "bg-purple-100", color: "text-purple-600", number: "15+", label: "Programs" },
-          { icon: FiMapPin, bg: "bg-orange-100", color: "text-orange-600", number: "3", label: "Campuses" },
+          { icon: FiUsers, bg: "bg-blue-100 dark:bg-blue-900", color: "text-blue-600 dark:text-blue-300", number: "2000+", label: "Students Enrolled" },
+          { icon: FiAward, bg: "bg-green-100 dark:bg-green-900", color: "text-green-600 dark:text-green-300", number: "98%", label: "Success Rate" },
+          { icon: FiBook, bg: "bg-purple-100 dark:bg-purple-900", color: "text-purple-600 dark:text-purple-300", number: "15+", label: "Programs" },
+          { icon: FiMapPin, bg: "bg-orange-100 dark:bg-orange-900", color: "text-orange-600 dark:text-orange-300", number: "3", label: "Campuses" },
         ].map((stat, index) => {
           const Icon = stat.icon;
           return (
             <div
               key={index}
-              className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center hover:scale-105 transition-transform duration-300"
+              className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 text-center hover:scale-105 transition-transform duration-300"
             >
               <div className={`w-16 h-16 ${stat.bg} rounded-full flex items-center justify-center mx-auto mb-4`}>
                 <Icon className={`w-8 h-8 ${stat.color}`} />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.number}</h3>
-              <p className="text-gray-600 font-medium">{stat.label}</p>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.number}</h3>
+              <p className="text-gray-600 dark:text-gray-300 font-medium">{stat.label}</p>
             </div>
           );
         })}
@@ -279,8 +279,9 @@ const ModernCollegeHome = () => {
 </section>
 
 
+
       {/* Courses Section */}
-    <section id="courses" className="py-20 bg-white">
+<section id="courses" className="py-20 bg-white dark:bg-gray-900">
   <div className="container mx-auto px-4">
     {/* Heading */}
     <motion.div
@@ -290,10 +291,10 @@ const ModernCollegeHome = () => {
       viewport={{ once: true }}
       className="text-center mb-14"
     >
-      <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
+      <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
         Our Programs
       </h2>
-      <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+      <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
         Choose from our diverse range of intermediate and bachelor programs
         designed to shape your academic and professional future.
       </p>
@@ -302,91 +303,90 @@ const ModernCollegeHome = () => {
     {/* Course Cards */}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
       {courses.map((course, index) => (
-     <motion.div
-  key={course.id}
-  initial={{ opacity: 0, y: 50 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6, delay: index * 0.1 }}
-  viewport={{ once: true }}
-  whileHover={{ y: -6 }}
-  className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden group flex flex-col"
->
-  {/* Course Image */}
-  <div className="relative h-56 overflow-hidden">
-    <Image
-      src={course.image}
-      alt={course.name}
-      fill
-      className="object-cover group-hover:scale-110 transition-transform duration-500"
-    />
-    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
-    <div className="absolute top-4 right-4">
-      <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-        {course.duration}
-      </span>
-    </div>
-  </div>
+        <motion.div
+          key={course.id}
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: index * 0.1 }}
+          viewport={{ once: true }}
+          whileHover={{ y: -6 }}
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 overflow-hidden group flex flex-col"
+        >
+          {/* Course Image */}
+          <div className="relative h-56 overflow-hidden">
+            <Image
+              src={course.image}
+              alt={course.name}
+              fill
+              className="object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300" />
+            <div className="absolute top-4 right-4">
+              <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                {course.duration}
+              </span>
+            </div>
+          </div>
 
-  {/* Card Content */}
-  <div className="p-6 flex flex-col flex-grow">
-    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-      {course.name}
-    </h3>
-    <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">
-      {course.description}
-    </p>
+          {/* Card Content */}
+          <div className="p-6 flex flex-col flex-grow">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-500 transition-colors">
+              {course.name}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed line-clamp-3">
+              {course.description}
+            </p>
 
-    {/* Features */}
-    <div className="mb-4">
-      <div className="flex flex-wrap gap-2 mb-3">
-        {course.features.map((feature, idx) => (
-          <span
-            key={idx}
-            className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded-full border border-blue-200"
-          >
-            {feature}
-          </span>
-        ))}
-      </div>
-    </div>
+            {/* Features */}
+            <div className="mb-4">
+              <div className="flex flex-wrap gap-2 mb-3">
+                {course.features.map((feature, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs px-2 py-1 rounded-full border border-blue-200 dark:border-blue-700"
+                  >
+                    {feature}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-    {/* Subjects */}
-    <div className="mb-4">
-      <h4 className="font-semibold text-gray-900 mb-2 text-sm">
-        Subjects:
-      </h4>
-      <div className="flex flex-wrap gap-1">
-        {course.subjects.map((subject, idx) => (
-          <span
-            key={idx}
-            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
-          >
-            {subject}
-          </span>
-        ))}
-      </div>
-    </div>
+            {/* Subjects */}
+            <div className="mb-4">
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">
+                Subjects:
+              </h4>
+              <div className="flex flex-wrap gap-1">
+                {course.subjects.map((subject, idx) => (
+                  <span
+                    key={idx}
+                    className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded"
+                  >
+                    {subject}
+                  </span>
+                ))}
+              </div>
+            </div>
 
-    {/* Fee Section */}
-    <div className="mb-6">
-      <p className="text-lg font-bold text-green-600">
-        Fee: {course.fee}
-      </p>
-      <p className="text-sm text-gray-500">Per semester</p>
-    </div>
+            {/* Fee Section */}
+            <div className="mb-6">
+              <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                Fee: {course.fee}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Per semester</p>
+            </div>
 
-    {/* Button at bottom */}
-    <motion.button
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      onClick={scrollToContact}
-      className="mt-auto w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3.5 rounded-xl font-semibold text-base transition-all duration-300 shadow-md hover:shadow-xl"
-    >
-      Apply Now
-    </motion.button>
-  </div>
-</motion.div>
-
+            {/* Button at bottom */}
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={scrollToContact}
+              className="mt-auto w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3.5 rounded-xl font-semibold text-base transition-all duration-300 shadow-md hover:shadow-xl"
+            >
+              Apply Now
+            </motion.button>
+          </div>
+        </motion.div>
       ))}
     </div>
 
@@ -411,8 +411,13 @@ const ModernCollegeHome = () => {
 </section>
 
 
+
       {/* Contact Form Section */}
-   <section id="contact" ref={contactFormRef} className="py-20 bg-gray-50">
+<section
+  id="contact"
+  ref={contactFormRef}
+  className="py-20 bg-gray-50 dark:bg-gray-900"
+>
   <div className="container mx-auto px-4">
     <div className="max-w-5xl mx-auto">
       {/* Section Header */}
@@ -423,10 +428,10 @@ const ModernCollegeHome = () => {
         viewport={{ once: true }}
         className="text-center mb-16"
       >
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
           Get In Touch
         </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
           Have questions? We are here to help! Contact us for admissions, programs, or campus life inquiries.
         </p>
       </motion.div>
@@ -438,57 +443,71 @@ const ModernCollegeHome = () => {
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="bg-white rounded-2xl shadow-xl p-8 sm:p-10 hover:shadow-2xl transition-shadow duration-300"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 sm:p-10 hover:shadow-2xl transition-shadow duration-300"
         >
           <form className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Full Name *
+              </label>
               <input
                 type="text"
                 required
                 placeholder="Enter your full name"
-                className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                className="w-full px-5 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Email Address *
+                </label>
                 <input
                   type="email"
                   required
                   placeholder="Enter your email"
-                  className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                  className="w-full px-5 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Phone Number *
+                </label>
                 <input
                   type="tel"
                   required
                   placeholder="Enter your phone number"
-                  className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                  className="w-full px-5 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Interested Program</label>
-              <select className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Interested Program
+              </label>
+              <select
+                className="w-full px-5 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
+              >
                 <option value="">Select a program</option>
                 {courses.map((course) => (
-                  <option key={course.id} value={course.id}>{course.name}</option>
+                  <option key={course.id} value={course.id}>
+                    {course.name}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Message *
+              </label>
               <textarea
                 rows={4}
                 required
                 placeholder="Tell us about your inquiry..."
-                className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                className="w-full px-5 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all duration-300"
               />
             </div>
 
@@ -512,14 +531,14 @@ const ModernCollegeHome = () => {
           className="space-y-6"
         >
           {/* Info Cards */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-xl font-bold text-gray-900 mb-5">Contact Information</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-5">Contact Information</h3>
             <div className="space-y-4">
               {[
-                { icon: FiMapPin, bg: "bg-blue-100", color: "text-blue-600", title: "Main Campus", text: "123 Education Street, Academic Town, City" },
-                { icon: FiPhone, bg: "bg-green-100", color: "text-green-600", title: "Phone", text: "+92 300 1234567" },
-                { icon: FiMail, bg: "bg-purple-100", color: "text-purple-600", title: "Email", text: "info@aspirecollege.edu.pk" },
-                { icon: FiMessageCircle, bg: "bg-orange-100", color: "text-orange-600", title: "WhatsApp", text: "+92 300 1234567" },
+                { icon: FiMapPin, bg: "bg-blue-100 dark:bg-blue-900", color: "text-blue-600 dark:text-blue-400", title: "Main Campus", text: "123 Education Street, Academic Town, City" },
+                { icon: FiPhone, bg: "bg-green-100 dark:bg-green-900", color: "text-green-600 dark:text-green-400", title: "Phone", text: "+92 300 1234567" },
+                { icon: FiMail, bg: "bg-purple-100 dark:bg-purple-900", color: "text-purple-600 dark:text-purple-400", title: "Email", text: "info@aspirecollege.edu.pk" },
+                { icon: FiMessageCircle, bg: "bg-orange-100 dark:bg-orange-900", color: "text-orange-600 dark:text-orange-400", title: "WhatsApp", text: "+92 300 1234567" },
               ].map((item, idx) => {
                 const Icon = item.icon;
                 return (
@@ -528,8 +547,8 @@ const ModernCollegeHome = () => {
                       <Icon className={`w-6 h-6 ${item.color}`} />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">{item.title}</p>
-                      <p className="text-gray-600">{item.text}</p>
+                      <p className="font-semibold text-gray-900 dark:text-white">{item.title}</p>
+                      <p className="text-gray-600 dark:text-gray-300">{item.text}</p>
                     </div>
                   </div>
                 );
@@ -548,9 +567,9 @@ const ModernCollegeHome = () => {
           </div>
 
           {/* Quick Admission */}
-          <div className="bg-white rounded-2xl shadow-xl p-6 border border-green-200 hover:shadow-2xl transition-shadow duration-300">
-            <h3 className="text-xl font-bold text-gray-900 mb-3">Quick Admission</h3>
-            <p className="text-gray-600 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-green-200 dark:border-green-700 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Quick Admission</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
               Ready to join Aspire College? Start your application process today!
             </p>
             <motion.button
@@ -567,6 +586,7 @@ const ModernCollegeHome = () => {
     </div>
   </div>
 </section>
+
 
 
       {/* Footer */}

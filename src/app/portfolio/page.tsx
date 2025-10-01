@@ -255,10 +255,14 @@ const quickLinks = [
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  type FormFields = 'name' | 'email' | 'subject' | 'message';
+
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const field = e.target.name as FormFields; // type assertion
+  const value = e.target.value;
+  setFormData(prev => ({ ...prev, [field]: value }));
+};
+
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -280,73 +284,72 @@ const quickLinks = [
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-     <nav className="fixed w-full bg-white/90 backdrop-blur-md z-50 shadow-sm">
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <h1 className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-            BrainWave
-          </h1>
+   <nav className="fixed w-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-md z-50 shadow-sm">
+  <div className="container mx-auto px-4 sm:px-6">
+    <div className="flex justify-between items-center py-4">
+      {/* Logo */}
+      <h1 className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+        BrainWave
+      </h1>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
-              <button
-                key={item}
-                onClick={() => scrollToSection(item.toLowerCase())}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300"
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-
-          {/* Mobile Menu Button */}
-         {/* Mobile Menu Button */}
-<button
-  className="md:hidden p-2 relative z-50 flex flex-col justify-center items-center gap-1"
-  onClick={() => setIsMenuOpen(!isMenuOpen)}
-  aria-label="Toggle Menu"
->
-  <span
-    className={`block h-0.5 w-6 bg-gray-700 transform transition duration-300 ease-in-out ${
-      isMenuOpen ? "rotate-45 translate-y-1.5" : ""
-    }`}
-  ></span>
-  <span
-    className={`block h-0.5 w-6 bg-gray-700 transition-opacity duration-300 ease-in-out ${
-      isMenuOpen ? "opacity-0" : "opacity-100"
-    }`}
-  ></span>
-  <span
-    className={`block h-0.5 w-6 bg-gray-700 transform transition duration-300 ease-in-out ${
-      isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
-    }`}
-  ></span>
-</button>
-
-        </div>
-
-        {/* Mobile Navigation */}
-        <div
-          className={`md:hidden overflow-hidden transition-all duration-500 ${
-            isMenuOpen ? "max-h-96 py-4" : "max-h-0"
-          }`}
-        >
-          <div className="space-y-4">
-            {navItems.map((item) => (
-              <button
-                key={item}
-                onClick={() => scrollToSection(item.toLowerCase())}
-                className="block w-full text-left px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 font-medium transition-colors duration-300"
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex space-x-8">
+        {navItems.map((item) => (
+          <button
+            key={item}
+            onClick={() => scrollToSection(item.toLowerCase())}
+            className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-300"
+          >
+            {item}
+          </button>
+        ))}
       </div>
-    </nav>
+
+      {/* Mobile Menu Button */}
+      <button
+        className="md:hidden p-2 relative z-50 flex flex-col justify-center items-center gap-1"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label="Toggle Menu"
+      >
+        <span
+          className={`block h-0.5 w-6 bg-gray-700 dark:bg-gray-200 transform transition duration-300 ease-in-out ${
+            isMenuOpen ? "rotate-45 translate-y-1.5" : ""
+          }`}
+        ></span>
+        <span
+          className={`block h-0.5 w-6 bg-gray-700 dark:bg-gray-200 transition-opacity duration-300 ease-in-out ${
+            isMenuOpen ? "opacity-0" : "opacity-100"
+          }`}
+        ></span>
+        <span
+          className={`block h-0.5 w-6 bg-gray-700 dark:bg-gray-200 transform transition duration-300 ease-in-out ${
+            isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
+          }`}
+        ></span>
+      </button>
+    </div>
+
+    {/* Mobile Navigation */}
+    <div
+      className={`md:hidden overflow-hidden transition-all duration-500 ${
+        isMenuOpen ? "max-h-96 py-4" : "max-h-0"
+      }`}
+    >
+      <div className="space-y-4">
+        {navItems.map((item) => (
+          <button
+            key={item}
+            onClick={() => scrollToSection(item.toLowerCase())}
+            className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 font-medium transition-colors duration-300"
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+</nav>
+
 
       {/* Hero Section */}
       <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden pt-16">
@@ -408,544 +411,530 @@ const quickLinks = [
       </section>
 
       {/* Journey Section */}
-      <section id="journey" className="py-16 sm:py-20 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6">
-          <motion.h2
-            className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-3 sm:mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            Our Educational Journey
-          </motion.h2>
-          <motion.p
-            className="text-lg sm:text-xl text-center text-gray-600 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            A legacy of excellence and innovation in education spanning decades
-          </motion.p>
+     <section id="journey" className="py-16 sm:py-20 bg-gray-50 dark:bg-gray-900">
+  <div className="container mx-auto px-4 sm:px-6">
+    <motion.h2
+      className="text-3xl sm:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-3 sm:mb-4"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+    >
+      Our Educational Journey
+    </motion.h2>
+    <motion.p
+      className="text-lg sm:text-xl text-center text-gray-600 dark:text-gray-300 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      A legacy of excellence and innovation in education spanning decades
+    </motion.p>
 
-          {/* Mobile Timeline - Cards */}
-          <div className="block md:hidden space-y-6">
-            {timelineData.map((item, index) => (
-              <motion.div
-                key={index}
-                className="bg-white rounded-xl shadow-lg overflow-hidden"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="relative h-48">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 400px"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center mb-3">
-                    <span className="text-blue-600 font-bold text-lg mr-4">{item.year}</span>
-                    <div className="h-1 flex-1 bg-blue-100"></div>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3 text-gray-800">{item.title}</h3>
-                  <p className="text-gray-600 mb-4">{item.description}</p>
-                  <button 
-                    onClick={() => handleLearnMore(item.title)}
-                    className="text-blue-600 font-semibold hover:text-blue-800 transition-colors duration-300 text-sm"
-                  >
-                    Learn More →
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+    {/* Mobile Timeline - Cards */}
+    <div className="block md:hidden space-y-6">
+      {timelineData.map((item, index) => (
+        <motion.div
+          key={index}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-700 overflow-hidden"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1, duration: 0.6 }}
+          viewport={{ once: true }}
+          whileHover={{ y: -5 }}
+        >
+          <div className="relative h-48">
+            <Image
+              src={item.image}
+              alt={item.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 400px"
+            />
           </div>
+          <div className="p-6">
+            <div className="flex items-center mb-3">
+              <span className="text-blue-600 font-bold text-lg mr-4">{item.year}</span>
+              <div className="h-1 flex-1 bg-blue-100 dark:bg-blue-800"></div>
+            </div>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-100">{item.title}</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">{item.description}</p>
+            <button 
+              onClick={() => handleLearnMore(item.title)}
+              className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-200 transition-colors duration-300 text-sm"
+            >
+              Learn More →
+            </button>
+          </div>
+        </motion.div>
+      ))}
+    </div>
 
-          {/* Desktop Timeline */}
-          <div ref={timelineRef} className="hidden md:block relative">
-            {/* Timeline line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-blue-200 h-full"></div>
+    {/* Desktop Timeline */}
+    <div ref={timelineRef} className="hidden md:block relative">
+      {/* Timeline line */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-blue-200 dark:bg-blue-800 h-full"></div>
 
-            {timelineData.map((item, index) => (
-              <div
-                key={index}
-                className={`timeline-item mb-12 flex ${
-                  index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'
-                } items-center`}
+      {timelineData.map((item, index) => (
+        <div
+          key={index}
+          className={`timeline-item mb-12 flex ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'} items-center`}
+        >
+          <div className="w-1/2 px-8">
+            <motion.div
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg dark:shadow-gray-700 hover:shadow-xl transition-shadow duration-300"
+              whileHover={{ y: -5 }}
+            >
+              <span className="text-blue-600 font-bold text-lg">{item.year}</span>
+              <h3 className="text-xl font-semibold mt-2 mb-3 text-gray-800 dark:text-gray-100">{item.title}</h3>
+              <p className="text-gray-600 dark:text-gray-300">{item.description}</p>
+              <button 
+                onClick={() => handleLearnMore(item.title)}
+                className="mt-4 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-200 transition-colors duration-300"
               >
-                <div className="w-1/2 px-8">
-                  <motion.div
-                    className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
-                    whileHover={{ y: -5 }}
-                  >
-                    <span className="text-blue-600 font-bold text-lg">{item.year}</span>
-                    <h3 className="text-xl font-semibold mt-2 mb-3">{item.title}</h3>
-                    <p className="text-gray-600">{item.description}</p>
-                    <button 
-                      onClick={() => handleLearnMore(item.title)}
-                      className="mt-4 text-blue-600 font-semibold hover:text-blue-800 transition-colors duration-300"
-                    >
-                      Learn More →
-                    </button>
-                  </motion.div>
-                </div>
-                <div className="w-8 h-8 bg-blue-600 rounded-full border-4 border-white z-10"></div>
-                <div className="w-1/2 px-8">
-                  <motion.div
-                    className="relative h-64 rounded-lg overflow-hidden shadow-md"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      className="object-cover"
-                      sizes="(min-width: 768px) 400px, 100vw"
-                    />
-                  </motion.div>
-                </div>
-              </div>
-            ))}
+                Learn More →
+              </button>
+            </motion.div>
+          </div>
+          <div className="w-8 h-8 bg-blue-600 dark:bg-blue-400 rounded-full border-4 border-white dark:border-gray-900 z-10"></div>
+          <div className="w-1/2 px-8">
+            <motion.div
+              className="relative h-64 rounded-lg overflow-hidden shadow-md dark:shadow-gray-700"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                className="object-cover"
+                sizes="(min-width: 768px) 400px, 100vw"
+              />
+            </motion.div>
           </div>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* Milestones Section */}
-      <section id="milestones" className="py-16 sm:py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <motion.h2
-            className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-3 sm:mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            Major Milestones & Events
-          </motion.h2>
-          <motion.p
-            className="text-lg sm:text-xl text-center text-gray-600 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            Celebrating our achievements and impact in education and beyond
-          </motion.p>
+     <section id="milestones" className="py-16 sm:py-20 bg-white dark:bg-gray-900">
+  <div className="container mx-auto px-4 sm:px-6">
+    <motion.h2
+      className="text-3xl sm:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-3 sm:mb-4"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+    >
+      Major Milestones & Events
+    </motion.h2>
+    <motion.p
+      className="text-lg sm:text-xl text-center text-gray-600 dark:text-gray-300 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      Celebrating our achievements and impact in education and beyond
+    </motion.p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {milestones.map((milestone, index) => (
-              <motion.div
-                key={index}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2, duration: 0.6 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -10 }}
-              >
-                <div className="relative h-48 sm:h-56 overflow-hidden">
-                  <Image
-                    src={milestone.image}
-                    alt={milestone.title}
-                    fill
-                    className="object-cover transition-transform duration-500 hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                  <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-                    {milestone.category}
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-3 text-gray-800">{milestone.title}</h3>
-                  <p className="text-gray-600 mb-4">{milestone.description}</p>
-                  <button 
-                    onClick={() => handleLearnMore(milestone.title)}
-                    className="text-blue-600 font-semibold hover:text-blue-800 transition-colors duration-300 text-sm"
-                  >
-                    Learn More →
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      {milestones.map((milestone, index) => (
+        <motion.div
+          key={index}
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg dark:shadow-gray-700 overflow-hidden hover:shadow-2xl dark:hover:shadow-gray-600 transition-all duration-300"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.2, duration: 0.6 }}
+          viewport={{ once: true }}
+          whileHover={{ y: -10 }}
+        >
+          <div className="relative h-48 sm:h-56 overflow-hidden">
+            <Image
+              src={milestone.image}
+              alt={milestone.title}
+              fill
+              className="object-cover transition-transform duration-500 hover:scale-110"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+            <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+              {milestone.category}
+            </div>
           </div>
-        </div>
-      </section>
+          <div className="p-6">
+            <h3 className="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-100">{milestone.title}</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">{milestone.description}</p>
+            <button 
+              onClick={() => handleLearnMore(milestone.title)}
+              className="text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-800 dark:hover:text-blue-200 transition-colors duration-300 text-sm"
+            >
+              Learn More →
+            </button>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* Future Vision Section */}
-      <section id="future" className="py-16 sm:py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="container mx-auto px-4 sm:px-6">
-          <motion.h2
-            className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-3 sm:mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            Our Future Vision
-          </motion.h2>
-          <motion.p
-            className="text-lg sm:text-xl text-center text-gray-600 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            Pioneering the future of education through innovation and forward-thinking initiatives
-          </motion.p>
+     <section id="future" className="py-16 sm:py-20 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900">
+  <div className="container mx-auto px-4 sm:px-6">
+    <motion.h2
+      className="text-3xl sm:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-3 sm:mb-4"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+    >
+      Our Future Vision
+    </motion.h2>
+    <motion.p
+      className="text-lg sm:text-xl text-center text-gray-600 dark:text-gray-300 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      Pioneering the future of education through innovation and forward-thinking initiatives
+    </motion.p>
 
-          <div className="max-w-6xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeVision}
-                className="bg-white rounded-2xl shadow-2xl overflow-hidden"
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.5 }}
+    <div className="max-w-6xl mx-auto">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeVision}
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl dark:shadow-gray-700 overflow-hidden"
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -100 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="flex flex-col lg:grid lg:grid-cols-2">
+            <div className="p-6 sm:p-8 lg:p-12 order-2 lg:order-1">
+              <div className="flex items-center mb-4 sm:mb-6">
+                <span className="text-2xl sm:text-3xl font-bold text-blue-600 mr-4">
+                  {futureVision[activeVision].year}
+                </span>
+                <div className="h-1 w-12 sm:w-16 bg-blue-600"></div>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+                {futureVision[activeVision].title}
+              </h3>
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-6">
+                {futureVision[activeVision].description}
+              </p>
+              <div className="space-y-3 mb-6 sm:mb-8">
+                {futureVision[activeVision].goals.map((goal, index) => (
+                  <div key={index} className="flex items-center">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                    <span className="text-gray-700 dark:text-gray-200 text-sm sm:text-base">{goal}</span>
+                  </div>
+                ))}
+              </div>
+              <button 
+                onClick={() => handleLearnMore(futureVision[activeVision].title)}
+                className="bg-blue-600 hover:bg-blue-700 text-white dark:text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-300 text-sm sm:text-base"
               >
-                <div className="flex flex-col lg:grid lg:grid-cols-2">
-                  <div className="p-6 sm:p-8 lg:p-12 order-2 lg:order-1">
-                    <div className="flex items-center mb-4 sm:mb-6">
-                      <span className="text-2xl sm:text-3xl font-bold text-blue-600 mr-4">
-                        {futureVision[activeVision].year}
-                      </span>
-                      <div className="h-1 w-12 sm:w-16 bg-blue-600"></div>
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
-                      {futureVision[activeVision].title}
-                    </h3>
-                    <p className="text-base sm:text-lg text-gray-600 mb-6">
-                      {futureVision[activeVision].description}
-                    </p>
-                    <div className="space-y-3 mb-6 sm:mb-8">
-                      {futureVision[activeVision].goals.map((goal, index) => (
-                        <div key={index} className="flex items-center">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                          <span className="text-gray-700 text-sm sm:text-base">{goal}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <button 
-                      onClick={() => handleLearnMore(futureVision[activeVision].title)}
-                      className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 text-sm sm:text-base"
-                    >
-                      Explore Vision
-                    </button>
-                  </div>
-                  <div className="h-64 sm:h-80 lg:h-auto order-1 lg:order-2">
-                    <Image
-                      src={futureVision[activeVision].image}
-                      alt={futureVision[activeVision].title}
-                      width={600}
-                      height={400}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="flex justify-center mt-6 sm:mt-8 space-x-3">
-              {futureVision.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-8 sm:w-12 h-2 rounded-full transition-all duration-300 ${
-                    index === activeVision ? 'bg-blue-600' : 'bg-gray-300'
-                  }`}
-                  onClick={() => setActiveVision(index)}
-                />
-              ))}
+                Explore Vision
+              </button>
+            </div>
+            <div className="h-64 sm:h-80 lg:h-auto order-1 lg:order-2">
+              <Image
+                src={futureVision[activeVision].image}
+                alt={futureVision[activeVision].title}
+                width={600}
+                height={400}
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
-        </div>
-      </section>
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="flex justify-center mt-6 sm:mt-8 space-x-3">
+        {futureVision.map((_, index) => (
+          <button
+            key={index}
+            className={`w-8 sm:w-12 h-2 rounded-full transition-all duration-300 ${
+              index === activeVision ? 'bg-blue-600 dark:bg-blue-400' : 'bg-gray-300 dark:bg-gray-600'
+            }`}
+            onClick={() => setActiveVision(index)}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 sm:py-20 bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6">
-          <motion.h2
-            className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-3 sm:mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            Alumni Testimonials
-          </motion.h2>
-          <motion.p
-            className="text-lg sm:text-xl text-center text-gray-600 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            Hear from our graduates who are making a difference around the world
-          </motion.p>
+    <section id="testimonials" className="py-16 sm:py-20 bg-gray-50 dark:bg-gray-900">
+  <div className="container mx-auto px-4 sm:px-6">
+    <motion.h2
+      className="text-3xl sm:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-3 sm:mb-4"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+    >
+      Alumni Testimonials
+    </motion.h2>
+    <motion.p
+      className="text-lg sm:text-xl text-center text-gray-600 dark:text-gray-300 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      Hear from our graduates who are making a difference around the world
+    </motion.p>
 
-          <div className="max-w-4xl mx-auto">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTestimonial}
-                className="bg-white p-6 sm:p-8 rounded-xl shadow-lg text-center"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full mx-auto mb-4 sm:mb-6 overflow-hidden relative">
-                  <Image
-                    src={testimonials[activeTestimonial].image}
-                    alt={testimonials[activeTestimonial].name}
-                    fill
-                    className="object-cover"
-                    sizes="80px"
-                  />
-                </div>
-                <p className="text-lg sm:text-xl text-gray-700 mb-4 sm:mb-6 italic leading-relaxed">
-                  {testimonials[activeTestimonial].content}
-                </p>
-                <h4 className="text-base sm:text-lg font-semibold text-gray-800 mb-1">
-                  {testimonials[activeTestimonial].name}
-                </h4>
-                <p className="text-blue-600 text-sm sm:text-base">{testimonials[activeTestimonial].role}</p>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="flex justify-center mt-6 sm:mt-8 space-x-3">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === activeTestimonial ? 'bg-blue-600' : 'bg-gray-300'
-                  }`}
-                  onClick={() => setActiveTestimonial(index)}
-                />
-              ))}
-            </div>
+    <div className="max-w-4xl mx-auto">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTestimonial}
+          className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-xl shadow-lg dark:shadow-gray-700 text-center"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full mx-auto mb-4 sm:mb-6 overflow-hidden relative">
+            <Image
+              src={testimonials[activeTestimonial].image}
+              alt={testimonials[activeTestimonial].name}
+              fill
+              className="object-cover"
+              sizes="80px"
+            />
           </div>
-        </div>
-      </section>
+          <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-200 mb-4 sm:mb-6 italic leading-relaxed">
+            {testimonials[activeTestimonial].content}
+          </p>
+          <h4 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1">
+            {testimonials[activeTestimonial].name}
+          </h4>
+          <p className="text-blue-600 dark:text-blue-400 text-sm sm:text-base">
+            {testimonials[activeTestimonial].role}
+          </p>
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="flex justify-center mt-6 sm:mt-8 space-x-3">
+        {testimonials.map((_, index) => (
+          <button
+            key={index}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              index === activeTestimonial ? 'bg-blue-600 dark:bg-blue-400' : 'bg-gray-300 dark:bg-gray-600'
+            }`}
+            onClick={() => setActiveTestimonial(index)}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* Stats Section */}
-      <section id="stats" className="py-16 sm:py-20 bg-blue-600 text-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <motion.h2
-            className="text-3xl sm:text-4xl font-bold text-center mb-3 sm:mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            By The Numbers
-          </motion.h2>
-          <motion.p
-            className="text-lg sm:text-xl text-center text-blue-100 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            Quantifying our impact and reach in the education landscape
-          </motion.p>
+    <section id="stats" className="py-16 sm:py-20 bg-blue-600 dark:bg-blue-800 text-white">
+  <div className="container mx-auto px-4 sm:px-6">
+    <motion.h2
+      className="text-3xl sm:text-4xl font-bold text-center mb-3 sm:mb-4"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+    >
+      By The Numbers
+    </motion.h2>
+    <motion.p
+      className="text-lg sm:text-xl text-center text-blue-100 dark:text-blue-200 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      Quantifying our impact and reach in the education landscape
+    </motion.p>
 
-          <div ref={statsRef} className="grid grid-cols-2 gap-6 sm:gap-8 text-center">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="p-4 sm:p-6"
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.2, duration: 0.6 }}
-                viewport={{ once: true }}
-              >
-                <div className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">
-                  <span className="stat-number" data-target={stat.value}>0</span>
-                  {stat.suffix}
-                </div>
-                <div className="text-blue-100 text-sm sm:text-base">{stat.label}</div>
-              </motion.div>
-            ))}
+    <div ref={statsRef} className="grid grid-cols-2 gap-6 sm:gap-8 text-center">
+      {stats.map((stat, index) => (
+        <motion.div
+          key={index}
+          className="p-4 sm:p-6"
+          initial={{ opacity: 0, scale: 0.5 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ delay: index * 0.2, duration: 0.6 }}
+          viewport={{ once: true }}
+        >
+          <div className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2">
+            <span className="stat-number" data-target={stat.value}>0</span>
+            {stat.suffix}
           </div>
-        </div>
-      </section>
+          <div className="text-blue-100 dark:text-blue-200 text-sm sm:text-base">{stat.label}</div>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* Contact Section */}
-      <section id="contact" className="py-16 sm:py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <motion.h2
-            className="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-3 sm:mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-          >
-            Get In Touch
-          </motion.h2>
-          <motion.p
-            className="text-lg sm:text-xl text-center text-gray-600 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            Ready to join our educational community? We wouldd love to hear from you
-          </motion.p>
+    <section id="contact" className="py-16 sm:py-20 bg-white dark:bg-gray-900">
+  <div className="container mx-auto px-4 sm:px-6">
+    <motion.h2
+      className="text-3xl sm:text-4xl font-bold text-center text-gray-800 dark:text-gray-100 mb-3 sm:mb-4"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      viewport={{ once: true }}
+    >
+      Get In Touch
+    </motion.h2>
+    <motion.p
+      className="text-lg sm:text-xl text-center text-gray-600 dark:text-gray-300 mb-12 sm:mb-16 max-w-3xl mx-auto px-4"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      viewport={{ once: true }}
+    >
+      Ready to join our educational community? We would love to hear from you
+    </motion.p>
 
-          <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm sm:text-base">Address</h4>
-                    <p className="text-gray-600 text-sm sm:text-base">123 Education Boulevard<br />Knowledge City, KC 12345</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm sm:text-base">Phone</h4>
-                    <p className="text-gray-600 text-sm sm:text-base">+1 (555) 123-4567</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-sm sm:text-base">Email</h4>
-                    <p className="text-gray-600 text-sm sm:text-base">info@aspirecollege.edu</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.form
-              onSubmit={handleSubmit}
-              className="space-y-4 sm:space-y-6"
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300 text-sm sm:text-base"
-                  required
-                />
+    <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        <h3 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100">Contact Information</h3>
+        <div className="space-y-4">
+          {/** Contact Items **/}
+          {[
+            {
+              icon: (
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              ),
+              title: 'Address',
+              info: <>123 Education Boulevard<br />Knowledge City, KC 12345</>
+            },
+            {
+              icon: (
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+              ),
+              title: 'Phone',
+              info: '+1 (555) 123-4567'
+            },
+            {
+              icon: (
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              ),
+              title: 'Email',
+              info: 'info@aspirecollege.edu'
+            },
+          ].map((item, idx) => (
+            <div key={idx} className="flex items-start">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                {item.icon}
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300 text-sm sm:text-base"
-                  required
-                />
+                <h4 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-100">{item.title}</h4>
+                <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">{item.info}</p>
               </div>
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300 text-sm sm:text-base"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-300 text-sm sm:text-base"
-                  required
-                ></textarea>
-              </div>
-              <motion.button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-300 disabled:opacity-50 text-sm sm:text-base"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                disabled={formStatus === 'submitting'}
-              >
-                {formStatus === 'submitting' ? 'Sending...' : 'Send Message'}
-              </motion.button>
-              
-              <AnimatePresence>
-                {formStatus === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="p-4 bg-green-100 text-green-700 rounded-lg text-sm sm:text-base"
-                  >
-                    Thank you for your message! We will get back to you soon.
-                  </motion.div>
-                )}
-                
-                {formStatus === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="p-4 bg-red-100 text-red-700 rounded-lg text-sm sm:text-base"
-                  >
-                    Sorry, there was an error sending your message. Please try again.
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.form>
-          </div>
+            </div>
+          ))}
         </div>
-      </section>
+      </motion.div>
+
+      <motion.form
+        onSubmit={handleSubmit}
+        className="space-y-4 sm:space-y-6"
+        initial={{ opacity: 0, x: 30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+      >
+        {/** Form Fields **/}
+        {['name', 'email', 'subject', 'message'].map((field, idx) => (
+          <div key={idx}>
+            <label htmlFor={field} className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2 capitalize">
+              {field === 'message' ? 'Message' : field.replace(/^\w/, c => c.toUpperCase())}
+            </label>
+            {field !== 'message' ? (
+              <input
+                type={field === 'email' ? 'email' : 'text'}
+                id={field}
+                name={field}
+                value={formData[field as keyof typeof formData]}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300 text-sm sm:text-base"
+                required
+              />
+            ) : (
+              <textarea
+                id={field}
+                name={field}
+                value={formData.message}
+                onChange={handleInputChange}
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300 text-sm sm:text-base"
+                required
+              ></textarea>
+            )}
+          </div>
+        ))}
+
+        <motion.button
+          type="submit"
+          className="w-full bg-blue-600 dark:bg-blue-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-300 disabled:opacity-50 text-sm sm:text-base"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          disabled={formStatus === 'submitting'}
+        >
+          {formStatus === 'submitting' ? 'Sending...' : 'Send Message'}
+        </motion.button>
+
+        <AnimatePresence>
+          {formStatus === 'success' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="p-4 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg text-sm sm:text-base"
+            >
+              Thank you for your message! We will get back to you soon.
+            </motion.div>
+          )}
+          {formStatus === 'error' && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg text-sm sm:text-base"
+            >
+              Sorry, there was an error sending your message. Please try again.
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.form>
+    </div>
+  </div>
+</section>
+
 
 <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto flex flex-col items-center text-center space-y-8">

@@ -9,7 +9,6 @@ import {
   FiCreditCard,
   FiBell,
   FiBarChart2,
-  FiLogOut,
 } from 'react-icons/fi';
 
 interface SidebarItem {
@@ -34,15 +33,11 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
     { icon: <FiBarChart2 />, label: 'Results', href: '/applicant_portal/result_page' },
   ];
 
-  const bottomItems: SidebarItem[] = [
-    { icon: <FiLogOut />, label: 'Logout', href: '/logout' },
-  ];
-
   return (
     <>
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 flex-col bg-white dark:bg-[#0d1117] border-r border-gray-200 dark:border-gray-800 shadow-md">
-        <SidebarContent pathname={pathname} menuItems={menuItems} bottomItems={bottomItems} />
+        <SidebarContent pathname={pathname} menuItems={menuItems} />
       </aside>
 
       {/* Mobile Sidebar */}
@@ -59,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
             ✕
           </button>
         </div>
-        <SidebarContent pathname={pathname} menuItems={menuItems} bottomItems={bottomItems} />
+        <SidebarContent pathname={pathname} menuItems={menuItems} />
       </aside>
 
       {/* Mobile Overlay */}
@@ -77,8 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, setMobileOpen }) => {
 const SidebarContent: React.FC<{
   pathname: string;
   menuItems: SidebarItem[];
-  bottomItems: SidebarItem[];
-}> = ({ pathname, menuItems, bottomItems }) => {
+}> = ({ pathname, menuItems }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
@@ -121,20 +115,6 @@ const SidebarContent: React.FC<{
           );
         })}
       </nav>
-
-      {/* Bottom Menu */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-800">
-        {bottomItems.map((item, index) => (
-          <Link
-            key={index}
-            href={item.href}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all group"
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </div>
     </div>
   );
 };

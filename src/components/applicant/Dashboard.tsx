@@ -3,13 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-
 import { 
   FiBell, 
   FiUser, 
   FiFileText, 
   FiUpload, 
-
   FiCreditCard, 
   FiCheckCircle,
   FiClock,
@@ -17,15 +15,13 @@ import {
   FiXCircle,
   FiEdit,
   FiEye,
- 
- 
   FiArrowRight,
   FiHelpCircle,
   FiCalendar,
   FiBook,
- 
 } from 'react-icons/fi';
 import Link from 'next/link';
+import { jsPDF } from "jspdf";
 
 // Define types
 interface Application {
@@ -55,7 +51,7 @@ const [applications, setApplications] = useState<Application[]>([
     id: "APP2024-001",
     program: "ICS ",
     status: "Submitted",
-    statusColor: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+    statusColor: "bg-yellow-100 text-yellow-800 border border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800",
     submittedDate: "2024-01-15",
     lastUpdated: "2024-01-15",
     documents: ["Transcript", "Character Certificate", "B-Form Copy"]
@@ -64,7 +60,7 @@ const [applications, setApplications] = useState<Application[]>([
     id: "APP2024-002",
     program: "F.Sc Pre-Medical",
     status: "In Review",
-    statusColor: "bg-blue-100 text-blue-800 border border-blue-200",
+    statusColor: "bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800",
     submittedDate: "2024-01-10",
     lastUpdated: "2024-01-18",
     documents: ["Transcript", "CNIC/B-Form", "Passport Size Photos"]
@@ -73,7 +69,7 @@ const [applications, setApplications] = useState<Application[]>([
     id: "APP2024-003",
     program: "I.Com ",
     status: "Accepted",
-    statusColor: "bg-green-100 text-green-800 border border-green-200",
+    statusColor: "bg-green-100 text-green-800 border border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800",
     submittedDate: "2024-01-05",
     lastUpdated: "2024-01-20",
     documents: ["Transcript", "Character Certificate", "Domicile"]
@@ -117,16 +113,16 @@ const [applications, setApplications] = useState<Application[]>([
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 font-sans">
       <div className="flex-1 flex flex-col">
-<header className="bg-gradient-to-r from-blue-500 to-blue-700 border border-white/30 sticky top-0 z-50 rounded-3xl shadow-lg mx-4 my-4">
+<header className="bg-gradient-to-r from-blue-500 to-blue-700 border border-white/30 dark:border-gray-600/30 sticky top-0 z-50 rounded-3xl shadow-lg mx-4 my-4">
   <div className="flex flex-col items-center justify-center sm:flex-row sm:justify-between px-6 py-4 h-16 sm:h-20 text-center sm:text-left">
     {/* Title + Welcome */}
     <div>
       <h2 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
         Student Portal
       </h2>
-      <p className="text-xs sm:text-sm text-white/90">
+      <p className="text-xs sm:text-sm text-white/90 dark:text-white/80">
         Welcome back {user?.firstName}
       </p>
     </div>
@@ -134,31 +130,26 @@ const [applications, setApplications] = useState<Application[]>([
     {/* Right Section */}
     <div className="hidden sm:flex items-center gap-4">
       {/* Notifications */}
-      <button className="relative p-3 rounded-full bg-white/20 border border-white/40 hover:border-white/70 transition-all hover:shadow-lg">
+      <button className="relative p-3 rounded-full bg-white/20 border border-white/40 hover:border-white/70 transition-all hover:shadow-lg dark:bg-gray-800/30 dark:border-gray-600/40 dark:hover:border-gray-400">
         <FiBell className="w-5 h-5 text-white" />
         <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
       </button>
 
       {/* Profile */}
       <div className="relative">
-        <button className="flex items-center gap-3 p-2 rounded-full bg-white/20 border border-white/40 hover:border-white/70 transition-all">
+        <button className="flex items-center gap-3 p-2 rounded-full bg-white/20 border border-white/40 hover:border-white/70 transition-all dark:bg-gray-800/30 dark:border-gray-600/40 dark:hover:border-gray-400">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-300 to-purple-500 rounded-full flex items-center justify-center">
             <FiUser className="w-5 h-5 text-white" />
           </div>
           <div className="text-left">
             <p className="text-sm font-medium text-white">{user?.firstName}</p>
-            <p className="text-xs text-white/80">Computer Science</p>
+            <p className="text-xs text-white/80 dark:text-white/70">Computer Science</p>
           </div>
         </button>
       </div>
     </div>
   </div>
 </header>
-
-
-
-
-
 
         {/* Main Content */}
         <main className="flex-1 p-6 space-y-8 max-w-7xl mx-auto w-full">
@@ -186,10 +177,6 @@ const [applications, setApplications] = useState<Application[]>([
 };
 
 // Enhanced Application Status Component
-
-
-
-
 const ApplicationStatus = () => {
   const [progress, setProgress] = useState(60);
   const radius = 70;
@@ -199,22 +186,22 @@ const ApplicationStatus = () => {
   useEffect(() => {
     const progressOffset = circumference - (progress / 100) * circumference;
     setOffset(progressOffset);
-  }, [setOffset, progress, circumference]);
+  }, [progress, circumference]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-8 hover:shadow-xl transition-all duration-300">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 p-6 sm:p-8 hover:shadow-xl transition-all duration-300">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
         {/* Progress Circle */}
         <div className="flex flex-col items-center">
-          <div className="relative w-40 h-40">
-            <svg className="w-40 h-40 transform -rotate-90">
+          <div className="relative w-40 h-40 sm:w-48 sm:h-48">
+            <svg className="w-40 h-40 sm:w-48 sm:h-48 transform -rotate-90">
               <circle
                 cx="80"
                 cy="80"
                 r={radius}
                 stroke="currentColor"
                 strokeWidth="8"
-                className="text-gray-200"
+                className="text-gray-200 dark:text-gray-700"
                 fill="transparent"
               />
               <circle
@@ -238,35 +225,40 @@ const ApplicationStatus = () => {
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <span className="text-3xl font-bold text-gray-900 block">
+                <span className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 block">
                   {progress}%
                 </span>
-                <span className="text-sm text-gray-500">Complete</span>
+                <span className="text-sm sm:text-base text-gray-500 dark:text-gray-400">Complete</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Progress Details */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 space-y-6 w-full">
           <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Application Progress</h3>
-            <p className="text-gray-600">
-              You ve completed <span className="font-semibold">{progress}%</span> of your application. Keep going to finish the remaining steps!
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              Application Progress
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+              You have completed <span className="font-semibold">{progress}%</span> of your application. Keep going to finish the remaining steps!
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <Step label="Personal Information" status="completed" />
             <Step label="Academic History" status="completed" />
             <Step label="Documents Upload" status="in-progress" />
             <Step label="Review & Submit" status="pending" />
           </div>
 
-          <Link href="/applicant_portal/my_application" className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all transform hover:-translate-y-0.5 shadow-lg">
-  Continue Application
-  <FiArrowRight className="w-4 h-4" />
-</Link>
+          <Link
+            href="/applicant_portal/my_application"
+            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all transform hover:-translate-y-0.5 shadow-lg mt-4 sm:mt-6"
+          >
+            Continue Application
+            <FiArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </div>
@@ -285,15 +277,15 @@ const Step = ({ label, status }: StepProps) => {
   switch (status) {
     case "completed":
       icon = <FiCheckCircle className="w-5 h-5 text-green-500" />;
-      textColor = "text-gray-700";
+      textColor = "text-gray-700 dark:text-gray-300";
       break;
     case "in-progress":
       icon = <FiClock className="w-4 h-4 text-yellow-500" />;
-      textColor = "text-yellow-600";
+      textColor = "text-yellow-600 dark:text-yellow-500";
       break;
     case "pending":
-      icon = <div className="w-5 h-5 border-2 border-gray-300 rounded"></div>;
-      textColor = "text-gray-400";
+      icon = <div className="w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded"></div>;
+      textColor = "text-gray-400 dark:text-gray-500";
       break;
   }
 
@@ -302,7 +294,7 @@ const Step = ({ label, status }: StepProps) => {
       <span className={`text-sm font-medium ${textColor}`}>{label}</span>
       {status === "in-progress" ? (
         <div className="flex items-center gap-2">
-          <span className="text-sm text-yellow-600">In Progress</span>
+          <span className="text-sm text-yellow-600 dark:text-yellow-500">In Progress</span>
           {icon}
         </div>
       ) : (
@@ -311,9 +303,6 @@ const Step = ({ label, status }: StepProps) => {
     </div>
   );
 };
-
-
-
 
 // Enhanced Applications Table Component
 interface ApplicationsTableProps {
@@ -338,40 +327,39 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({ applications, onV
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-      <div className="p-6 border-b border-gray-200">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-gray-900">My Applications</h3>
-            <p className="text-gray-600">Track and manage your applications</p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">My Applications</h3>
+            <p className="text-gray-600 dark:text-gray-400">Track and manage your applications</p>
           </div>
-   
         </div>
       </div>
 
       {/* Desktop Table */}
       <div className="hidden lg:block">
       <table className="w-full">
-  <thead className="bg-gray-50 border-b border-gray-200">
+  <thead className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
     <tr>
-      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Application ID</th>
-      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Program</th>
-      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Submitted Date</th>
-      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
-      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Actions</th>
+      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Application ID</th>
+      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Program</th>
+      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Submitted Date</th>
+      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Status</th>
+      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">Actions</th>
     </tr>
   </thead>
-  <tbody className="divide-y divide-gray-200">
+  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
     {applications.map((app) => (
-      <tr key={app.id} className="hover:bg-gray-50 transition-colors">
+      <tr key={app.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
         <td className="px-6 py-4">
-          <div className="text-sm font-medium text-gray-900">{app.id}</div>
+          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{app.id}</div>
         </td>
         <td className="px-6 py-4">
-          <div className="text-sm text-gray-900">{app.program}</div>
+          <div className="text-sm text-gray-900 dark:text-gray-100">{app.program}</div>
         </td>
         <td className="px-6 py-4">
-          <div className="text-sm text-gray-500">{app.submittedDate}</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">{app.submittedDate}</div>
         </td>
         <td className="px-6 py-4">
           <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${app.statusColor}`}>
@@ -383,14 +371,14 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({ applications, onV
           <div className="flex items-center gap-2">
             <button
               onClick={() => onViewEdit(app)}
-              className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+              className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
               title="View details"
             >
               <FiEye className="w-4 h-4" />
             </button>
             <button
               onClick={() => onViewEdit(app)}
-              className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors"
+              className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 dark:text-green-400 dark:hover:text-green-300 dark:hover:bg-green-900/30 rounded-lg transition-colors"
               title="Edit application"
             >
               <FiEdit className="w-4 h-4" />
@@ -407,9 +395,9 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({ applications, onV
       {/* Mobile Cards */}
       <div className="lg:hidden space-y-4 p-6">
         {applications.map((app) => (
-          <div key={app.id} className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+          <div key={app.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-md dark:hover:shadow-gray-700/20 transition-shadow">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-sm font-medium text-gray-900">{app.id}</div>
+              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{app.id}</div>
               <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${app.statusColor}`}>
                 {getStatusIcon(app.status)}
                 {app.status}
@@ -417,24 +405,24 @@ const ApplicationsTable: React.FC<ApplicationsTableProps> = ({ applications, onV
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Program:</span>
-                <span className="text-sm font-medium text-gray-900">{app.program}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Program:</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{app.program}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-gray-600">Submitted:</span>
-                <span className="text-sm text-gray-500">{app.submittedDate}</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Submitted:</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{app.submittedDate}</span>
               </div>
             </div>
-            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
               <button
                 onClick={() => onViewEdit(app)}
-                className="flex-1 py-2 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors text-center"
+                className="flex-1 py-2 text-blue-600 dark:text-blue-400 font-medium rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors text-center"
               >
                 View Details
               </button>
               <button
                 onClick={() => onViewEdit(app)}
-                className="flex-1 py-2 text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors text-center"
+                className="flex-1 py-2 text-green-600 dark:text-green-400 font-medium rounded-lg hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors text-center"
               >
                 Edit
               </button>
@@ -470,21 +458,21 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = ({
   ];
 
   const statusOptions = [
-    { value: "Submitted", label: "Submitted", color: "bg-yellow-100 text-yellow-800" },
-    { value: "In Review", label: "In Review", color: "bg-blue-100 text-blue-800" },
-    { value: "Accepted", label: "Accepted", color: "bg-green-100 text-green-800" },
-    { value: "Rejected", label: "Rejected", color: "bg-red-100 text-red-800" },
+    { value: "Submitted", label: "Submitted", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300" },
+    { value: "In Review", label: "In Review", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300" },
+    { value: "Accepted", label: "Accepted", color: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300" },
+    { value: "Rejected", label: "Rejected", color: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300" },
   ];
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold">Application Details</h2>
-              <p className="text-blue-100 mt-1">Manage your application information</p>
+              <p className="text-blue-100 dark:text-blue-200 mt-1">Manage your application information</p>
             </div>
             <button
               onClick={onCancel}
@@ -499,7 +487,7 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = ({
         <div className="p-6 space-y-6">
           {/* Application ID */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <FiFileText className="w-4 h-4" />
               Application ID
             </label>
@@ -507,20 +495,20 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = ({
               type="text"
               value={application.id}
               disabled
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
             />
           </div>
 
           {/* Program Selection */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <FiBook className="w-4 h-4" />
               Program
             </label>
             <select
               value={application.program}
               onChange={(e) => onInputChange('program', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 transition-all"
             >
               {programOptions.map((program) => (
                 <option key={program} value={program}>
@@ -532,14 +520,14 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = ({
 
           {/* Status Selection */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <FiAlertCircle className="w-4 h-4" />
               Status
             </label>
             <select
               value={application.status}
               onChange={(e) => onInputChange('status', e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-600 transition-all"
             >
               {statusOptions.map((status) => (
                 <option key={status.value} value={status.value}>
@@ -551,18 +539,18 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = ({
 
           {/* Documents Section */}
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               <FiUpload className="w-4 h-4" />
               Required Documents
             </label>
             <div className="space-y-3">
               {application.documents?.map((doc, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-3">
-                    <FiFileText className="w-5 h-5 text-blue-600" />
-                    <span className="text-sm font-medium text-gray-700">{doc}</span>
+                    <FiFileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{doc}</span>
                   </div>
-                  <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full border border-green-200">
+                  <span className="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300 rounded-full border border-green-200 dark:border-green-800">
                     Uploaded
                   </span>
                 </div>
@@ -571,29 +559,29 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = ({
           </div>
 
           {/* Application Timeline */}
-          <div className="border-t border-gray-200 pt-6">
-            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h4 className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
               <FiCalendar className="w-4 h-4" />
               Application Timeline
             </h4>
             <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                <span className="text-sm text-gray-600">Submitted Date:</span>
-                <span className="text-sm font-medium text-gray-900">{application.submittedDate}</span>
+              <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <span className="text-sm text-gray-600 dark:text-gray-400">Submitted Date:</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{application.submittedDate}</span>
               </div>
-              <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">Last Updated:</span>
-                <span className="text-sm font-medium text-gray-900">{application.lastUpdated}</span>
+              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <span className="text-sm text-gray-600 dark:text-gray-400">Last Updated:</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{application.lastUpdated}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+        <div className="flex gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-b-2xl">
           <button
             onClick={onCancel}
-            className="flex-1 px-6 py-3 text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors font-medium"
+            className="flex-1 px-6 py-3 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors font-medium"
           >
             Cancel
           </button>
@@ -611,11 +599,6 @@ const EditApplicationModal: React.FC<EditApplicationModalProps> = ({
 };
 
 // Enhanced Quick Actions Grid Component
-
-
-import { jsPDF } from "jspdf";
- // adjust path
-
 const QuickActionsGrid = () => {
   const { user } = useAuth();
   const [uploadedFiles, setUploadedFiles] = useState<{
@@ -672,7 +655,7 @@ const QuickActionsGrid = () => {
       description: "Manage your payments",
       color: "from-green-500 to-green-600",
       actions: [
-        { label: "Pay Online", action: () => alert("Redirecting to payment gateway...") },
+        { label: "Pay Online", action: () =>  window.location.href = "/applicant_portal/fee_mange" },
         { label: "Download Challan", action: handleDownloadChallan },
       ],
     },
@@ -685,24 +668,24 @@ const QuickActionsGrid = () => {
       return <img src={url} alt={file.name} className="w-24 h-24 object-cover rounded-lg" />;
     } else if (file.type === "application/pdf") {
       return (
-        <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+        <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 underline">
           {file.name} (PDF)
         </a>
       );
     } else {
-      return <span>{file.name}</span>;
+      return <span className="text-gray-700 dark:text-gray-300">{file.name}</span>;
     }
   };
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       {quickActions.map((section, sectionIndex) => (
-        <div key={sectionIndex} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <div key={sectionIndex} className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-center gap-3 mb-6">
             <div className={`p-3 rounded-xl bg-gradient-to-r ${section.color}`}>{section.icon}</div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
-              <p className="text-sm text-gray-600">{section.description}</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{section.title}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{section.description}</p>
             </div>
           </div>
 
@@ -710,22 +693,22 @@ const QuickActionsGrid = () => {
             <div className="space-y-4 mb-4">
               {section.items.map((item, itemIndex) => (
                 <div key={itemIndex} className="flex flex-col gap-2">
-                  <label className="flex items-center justify-between p-4 rounded-xl border border-gray-200 hover:border-blue-300 cursor-pointer transition-all hover:shadow-md">
+                  <label className="flex items-center justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 cursor-pointer transition-all hover:shadow-md dark:hover:shadow-gray-700/20">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-blue-50 rounded-lg">{item.icon}</div>
-                      <span className="font-medium text-gray-800">{item.label}</span>
+                      <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">{item.icon}</div>
+                      <span className="font-medium text-gray-800 dark:text-gray-200">{item.label}</span>
                     </div>
                     <input
                       type="file"
                       className="hidden"
                       onChange={(e) => handleFileUpload(e, item.key)}
                     />
-                    <FiUpload className="w-5 h-5 text-gray-400" />
+                    <FiUpload className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                   </label>
 
                   {/* Show uploaded file preview with option to replace */}
                   {uploadedFiles[item.key] && (
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                       {renderFilePreview(uploadedFiles[item.key]!)}
                       <button
                         className="ml-auto px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
@@ -751,7 +734,7 @@ const QuickActionsGrid = () => {
                   className={`flex-1 py-3 px-4 font-medium rounded-xl transition-all transform hover:-translate-y-0.5 ${
                     actionIndex === 0
                       ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600"
                   }`}
                 >
                   {action.label}
@@ -764,12 +747,6 @@ const QuickActionsGrid = () => {
     </div>
   );
 };
-
-
-
-
-
-
 
 // Enhanced Guidance Tips Component
 const GuidanceTips = () => {
@@ -798,8 +775,8 @@ const GuidanceTips = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-2xl font-bold text-gray-900">Guidance & Support</h3>
-          <p className="text-gray-600">Helpful tips to complete your application successfully</p>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Guidance & Support</h3>
+          <p className="text-gray-600 dark:text-gray-400">Helpful tips to complete your application successfully</p>
         </div>
         
       </div>
@@ -808,7 +785,7 @@ const GuidanceTips = () => {
         {tips.map((tip, index) => (
           <div
             key={index}
-            className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all group"
+            className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg dark:hover:shadow-gray-700/20 transition-all group"
           >
             <div className="relative h-48 overflow-hidden">
               <Image
@@ -818,14 +795,14 @@ const GuidanceTips = () => {
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <div className="absolute top-4 right-4 p-2 bg-white rounded-lg">
+              <div className="absolute top-4 right-4 p-2 bg-white dark:bg-gray-800 rounded-lg">
                 {tip.icon}
               </div>
             </div>
             <div className="p-6">
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">{tip.title}</h4>
-              <p className="text-gray-600 mb-4">{tip.description}</p>
-             <Link href="/applicant_portal/guidance"> <button className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2 transition-colors">
+              <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{tip.title}</h4>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">{tip.description}</p>
+             <Link href="/applicant_portal/guidance"> <button className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium flex items-center gap-2 transition-colors">
                 Learn More
                 <FiArrowRight className="w-4 h-4" />
               </button></Link>
