@@ -212,81 +212,72 @@ const ModernCollegeHome = () => {
 
 
       {/* About Section */}
-      <section id="about" className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
+     <section id="about" className="py-20 bg-gray-50">
+  <div className="container mx-auto px-4">
+    <div className="grid lg:grid-cols-2 gap-12 items-center">
+      {/* Text Section */}
+      <motion.div
+        initial={{ opacity: 0, x: -60 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.7 }}
+        viewport={{ once: true }}
+      >
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
+          About College
+        </h2>
+        <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+          Aspire College is a premier educational institution dedicated to providing 
+          top-quality education that empowers students to excel academically and evolve 
+          into responsible, capable individuals. Our modern campus and expert faculty 
+          create a vibrant learning environment.
+        </p>
+        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+          Our mission is to foster innovation, critical thinking, and holistic development, 
+          preparing students for higher education and professional success.
+        </p>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={scrollToContact}
+          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-3 rounded-xl font-semibold shadow-xl transition-all duration-300"
+        >
+          Contact Now
+        </motion.button>
+      </motion.div>
+
+      {/* Stats Section */}
+      <motion.div
+        initial={{ opacity: 0, x: 60 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.7 }}
+        viewport={{ once: true }}
+        className="grid grid-cols-2 gap-6"
+      >
+        {[
+          { icon: FiUsers, bg: "bg-blue-100", color: "text-blue-600", number: "2000+", label: "Students Enrolled" },
+          { icon: FiAward, bg: "bg-green-100", color: "text-green-600", number: "98%", label: "Success Rate" },
+          { icon: FiBook, bg: "bg-purple-100", color: "text-purple-600", number: "15+", label: "Programs" },
+          { icon: FiMapPin, bg: "bg-orange-100", color: "text-orange-600", number: "3", label: "Campuses" },
+        ].map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={index}
+              className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 text-center hover:scale-105 transition-transform duration-300"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                About Aspire College
-              </h2>
-              <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Aspire College is a premier educational institution committed to providing 
-                quality education that empowers students to excel academically and develop 
-                into responsible citizens. With state-of-the-art facilities and experienced 
-                faculty, we create an environment conducive to learning and personal growth.
-              </p>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                Our mission is to nurture young minds through innovative teaching methods, 
-                character building, and holistic development programs that prepare students 
-                for the challenges of higher education and professional life.
-              </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={scrollToContact}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg font-semibold shadow-lg"
-              >
-                Contact Now
-              </motion.button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="grid grid-cols-2 gap-6"
-            >
-              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FiUsers className="w-8 h-8 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">2000+</h3>
-                <p className="text-gray-600">Students Enrolled</p>
+              <div className={`w-16 h-16 ${stat.bg} rounded-full flex items-center justify-center mx-auto mb-4`}>
+                <Icon className={`w-8 h-8 ${stat.color}`} />
               </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.number}</h3>
+              <p className="text-gray-600 font-medium">{stat.label}</p>
+            </div>
+          );
+        })}
+      </motion.div>
+    </div>
+  </div>
+</section>
 
-              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FiAward className="w-8 h-8 text-green-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">98%</h3>
-                <p className="text-gray-600">Success Rate</p>
-              </div>
-
-              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FiBook className="w-8 h-8 text-purple-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">15+</h3>
-                <p className="text-gray-600">Programs</p>
-              </div>
-
-              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 text-center">
-                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FiMapPin className="w-8 h-8 text-orange-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">3</h3>
-                <p className="text-gray-600">Campuses</p>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
       {/* Courses Section */}
     <section id="courses" className="py-20 bg-white">
@@ -421,193 +412,162 @@ const ModernCollegeHome = () => {
 
 
       {/* Contact Form Section */}
-      <section id="contact" ref={contactFormRef} className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
+   <section id="contact" ref={contactFormRef} className="py-20 bg-gray-50">
+  <div className="container mx-auto px-4">
+    <div className="max-w-5xl mx-auto">
+      {/* Section Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        viewport={{ once: true }}
+        className="text-center mb-16"
+      >
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+          Get In Touch
+        </h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          Have questions? We are here to help! Contact us for admissions, programs, or campus life inquiries.
+        </p>
+      </motion.div>
+
+      <div className="grid lg:grid-cols-2 gap-10">
+        {/* Contact Form */}
+        <motion.div
+          initial={{ opacity: 0, x: -50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+          className="bg-white rounded-2xl shadow-xl p-8 sm:p-10 hover:shadow-2xl transition-shadow duration-300"
+        >
+          <form className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+              <input
+                type="text"
+                required
+                placeholder="Enter your full name"
+                className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="Enter your email"
+                  className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                <input
+                  type="tel"
+                  required
+                  placeholder="Enter your phone number"
+                  className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Interested Program</label>
+              <select className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                <option value="">Select a program</option>
+                {courses.map((course) => (
+                  <option key={course.id} value={course.id}>{course.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+              <textarea
+                rows={4}
+                required
+                placeholder="Tell us about your inquiry..."
+                className="w-full px-5 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+              />
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-2xl font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-2xl"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Get In Touch
-              </h2>
-              <p className="text-lg text-gray-600">
-                Have questions? We are here to help. Contact us for more information about admissions, programs, and campus life.
-              </p>
-            </motion.div>
+              Send Message
+            </motion.button>
+          </form>
+        </motion.div>
 
-            <div className="grid lg:grid-cols-2 gap-8">
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-xl shadow-lg p-8"
-              >
-                <form className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                      placeholder="Enter your full name"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Contact Info Sidebar */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+          className="space-y-6"
+        >
+          {/* Info Cards */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-xl font-bold text-gray-900 mb-5">Contact Information</h3>
+            <div className="space-y-4">
+              {[
+                { icon: FiMapPin, bg: "bg-blue-100", color: "text-blue-600", title: "Main Campus", text: "123 Education Street, Academic Town, City" },
+                { icon: FiPhone, bg: "bg-green-100", color: "text-green-600", title: "Phone", text: "+92 300 1234567" },
+                { icon: FiMail, bg: "bg-purple-100", color: "text-purple-600", title: "Email", text: "info@aspirecollege.edu.pk" },
+                { icon: FiMessageCircle, bg: "bg-orange-100", color: "text-orange-600", title: "WhatsApp", text: "+92 300 1234567" },
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div key={idx} className="flex items-center space-x-4">
+                    <div className={`w-12 h-12 ${item.bg} rounded-full flex items-center justify-center`}>
+                      <Icon className={`w-6 h-6 ${item.color}`} />
+                    </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                        placeholder="Enter your email"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number *
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                        placeholder="Enter your phone number"
-                      />
+                      <p className="font-semibold text-gray-900">{item.title}</p>
+                      <p className="text-gray-600">{item.text}</p>
                     </div>
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Interested Program
-                    </label>
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
-                      <option value="">Select a program</option>
-                      {courses.map((course) => (
-                        <option key={course.id} value={course.id}>
-                          {course.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Message *
-                    </label>
-                    <textarea
-                      rows={4}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                      placeholder="Tell us about your inquiry..."
-                    />
-                  </div>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 rounded-lg font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    Send Message
-                  </motion.button>
-                </form>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="space-y-6"
-              >
-                <div className="bg-white rounded-xl shadow-lg p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    Contact Information
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <FiMapPin className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">Main Campus</p>
-                        <p className="text-gray-600">123 Education Street, Academic Town, City</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                        <FiPhone className="w-6 h-6 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">Phone</p>
-                        <p className="text-gray-600">+92 300 1234567</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        <FiMail className="w-6 h-6 text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">Email</p>
-                        <p className="text-gray-600">info@aspirecollege.edu.pk</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                        <FiMessageCircle className="w-6 h-6 text-orange-600" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">WhatsApp</p>
-                        <p className="text-gray-600">+92 300 1234567</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-6 text-white">
-                  <h3 className="text-xl font-bold mb-4">Office Hours</h3>
-                  <div className="space-y-2">
-                    <p><strong>Monday - Friday:</strong> 8:00 AM - 4:00 PM</p>
-                    <p><strong>Saturday:</strong> 9:00 AM - 1:00 PM</p>
-                    <p><strong>Sunday:</strong> Closed</p>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl shadow-lg p-6 border border-green-200">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    Quick Admission
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    Ready to join Aspire College? Start your application process today!
-                  </p>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={scrollToContact}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-colors duration-300"
-                  >
-                    Apply for Admission
-                  </motion.button>
-                </div>
-              </motion.div>
+                );
+              })}
             </div>
           </div>
-        </div>
-      </section>
+
+          {/* Office Hours */}
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-6 text-white hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-xl font-bold mb-4">Office Hours</h3>
+            <div className="space-y-2">
+              <p><strong>Monday - Friday:</strong> 8:00 AM - 4:00 PM</p>
+              <p><strong>Saturday:</strong> 9:00 AM - 1:00 PM</p>
+              <p><strong>Sunday:</strong> Closed</p>
+            </div>
+          </div>
+
+          {/* Quick Admission */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 border border-green-200 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">Quick Admission</h3>
+            <p className="text-gray-600 mb-4">
+              Ready to join Aspire College? Start your application process today!
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={scrollToContact}
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-semibold transition-all duration-300"
+            >
+              Apply for Admission
+            </motion.button>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
       {/* Footer */}
     <footer className="bg-gray-900 text-white">

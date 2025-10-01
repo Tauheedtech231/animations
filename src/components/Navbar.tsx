@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
@@ -16,6 +17,7 @@ export default function Navbar() {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/applicant_portal", label: "Applicant Portal" },
+    { href: "/portfolio", label: "Portfolio", external: true },
   ];
 
   return (
@@ -23,19 +25,40 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 group">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 flex items-center justify-center text-white font-bold text-xl transform transition-transform duration-300 group-hover:scale-110">
-              N
+        <Link href="/" className="flex items-center space-x-2 group">
+          <div className="h-10 w-10 relative">
+            <div className="h-10 w-10 relative">
+              <Image
+                src="https://cdn-icons-png.flaticon.com/512/2907/2907250.png" // Use a local image from public folder for reliability
+                alt="Online School Logo"
+                width={40}
+                height={40}
+                priority
+              />
             </div>
-            <span className="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-300 group-hover:text-blue-600">
-              Champion School
-            </span>
-          </Link>
+          </div>
+          <span className="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-300 group-hover:text-blue-600">
+ School
+          </span>
+        </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex space-x-8">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
+              if (link.external) {
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative text-sm font-medium transition-colors duration-300 text-gray-600 dark:text-gray-300 hover:text-blue-600"
+                  >
+                    {link.label}
+                  </a>
+                );
+              }
               return (
                 <Link
                   key={link.href}
@@ -142,6 +165,24 @@ export default function Navbar() {
             >
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
+                if (link.external) {
+                  return (
+                    <motion.div
+                      key={link.href}
+                      variants={{ hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0 } }}
+                    >
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 transition"
+                      >
+                        {link.label}
+                      </a>
+                    </motion.div>
+                  );
+                }
                 return (
                   <motion.div
                     key={link.href}

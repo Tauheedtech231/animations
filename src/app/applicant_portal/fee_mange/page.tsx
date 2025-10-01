@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import {
   FiCreditCard,
@@ -13,12 +13,52 @@ import {
   FiHome,
   FiDollarSign,
   FiLock,
+  FiAlertCircle,
 } from "react-icons/fi";
+
+// Define the application data structure based on your previous form
+interface ApplicationData {
+  personalInfo: {
+    fullName: string;
+    cnic: string;
+    dob: string;
+    gender: string;
+    address: string;
+  };
+  academicInfo: {
+    academicLevel: string;
+    obtainedMarks: string;
+    totalMarks: string;
+    percentage: string;
+    institute: string;
+    board: string;
+    passingYear: string;
+  };
+  courseSelection: {
+    program: string;
+    specialization: string;
+    mode: string;
+    duration: string;
+    startDate: string;
+  };
+  feeDetails?: {
+    originalFee: number;
+    scholarshipPercentage: number;
+    scholarshipAmount: number;
+    finalFee: number;
+    applicationId: string;
+  };
+  paymentStatus?: "pending" | "paid";
+  paymentDate?: string;
+}
 
 const FeePayment = () => {
   const [paymentMethod, setPaymentMethod] = useState<"online" | "offline">("online");
   const [selectedPaymentType, setSelectedPaymentType] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [applicationId, setApplicationId] = useState("");
+  const [applicationData, setApplicationData] = useState<ApplicationData | null>(null);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     // Credit Card
     cardNumber: "",
@@ -38,13 +78,23 @@ const FeePayment = () => {
     pin: "",
   });
 
-  const feeDetails = {
+  // Default fee details (fallback)
+  const defaultFeeDetails = {
     tuition: 50000,
     hostel: 10000,
     library: 2000,
     sports: 1500,
     total: 63500,
   };
+
+  // Get fee details from application data or use default
+  const feeDetails = applicationData?.feeDetails ? {
+    tuition: applicationData.feeDetails.finalFee,
+    hostel: 0,
+    library: 0,
+    sports: 0,
+    total: applicationData.feeDetails.finalFee,
+  } : defaultFeeDetails;
 
   const paymentMethods = [
     {
@@ -84,6 +134,48 @@ const FeePayment = () => {
     },
   ];
 
+  // Fetch application data when applicationId changes
+  useEffect(() => {
+    if (applicationId) {
+      fetchApplicationData(applicationId);
+    } else {
+      setApplicationData(null);
+      setError("");
+    }
+  }, [applicationId]);
+
+  const fetchApplicationData = (appId: string) => {
+    try {
+      // Look for application data in localStorage
+      const savedFormData = localStorage.getItem("multistep-form-data");
+      
+      if (savedFormData) {
+        const parsedData = JSON.parse(savedFormData);
+        
+        // Check if the application ID matches
+        if (parsedData.feeDetails && parsedData.feeDetails.applicationId === appId) {
+          setApplicationData(parsedData);
+          setError("");
+          
+          // Check if already paid
+          if (parsedData.paymentStatus === "paid") {
+            setError(`Application ${appId} has already been paid on ${parsedData.paymentDate || "a previous date"}`);
+          }
+        } else {
+          setApplicationData(null);
+          setError("Application ID not found. Please check the ID and try again.");
+        }
+      } else {
+        setApplicationData(null);
+        setError("No application data found in system.");
+      }
+    } catch (error) {
+      setApplicationData(null);
+      setError("Error fetching application data. Please try again.");
+      console.error("Error fetching application data:", error);
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -92,17 +184,152 @@ const FeePayment = () => {
     }));
   };
 
+  const handleApplicationIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setApplicationId(e.target.value.toUpperCase());
+  };
+
   const handleDownloadChallan = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text("ACME UNIVERSITY - Fee Challan", 105, 20, { align: "center" });
-    doc.setFontSize(12);
-    doc.text(`Student: John Doe`, 20, 40);
-    doc.text(`Program: Computer Science`, 20, 50);
-    doc.text(`Semester: Fall 2025`, 20, 60);
-    doc.text(`Total Amount: PKR ${feeDetails.total.toLocaleString()}`, 20, 80);
-    doc.text("Due Date: Sep 30, 2025", 20, 90);
-    doc.save("Fee_Challan.pdf");
+    if (!applicationData) {
+      alert("Please enter a valid Application ID first");
+      return;
+    }
+
+    if (applicationData.paymentStatus === "paid") {
+      alert("This application has already been paid. Cannot generate challan.");
+      return;
+    }
+
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      let yPosition = margin;
+
+      // Header with background
+      doc.setFillColor(41, 128, 185);
+      doc.rect(0, 0, pageWidth, 50, 'F');
+      
+      // Institution Name
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(255, 255, 255);
+      doc.text("EDUCO UNIVERSITY", pageWidth / 2, 20, { align: "center" });
+      
+      // Title
+      doc.setFontSize(16);
+      doc.text("FEE PAYMENT CHALLAN", pageWidth / 2, 35, { align: "center" });
+
+      // Reset for content
+      doc.setTextColor(0, 0, 0);
+      yPosition = 65;
+
+      // Application ID and Date
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Application ID: ${applicationData.feeDetails?.applicationId || applicationId}`, margin, yPosition);
+      doc.text(`Generated: ${new Date().toLocaleDateString()}`, pageWidth - margin, yPosition, { align: "right" });
+      yPosition += 15;
+
+      // Student Information
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("STUDENT INFORMATION", margin, yPosition);
+      yPosition += 10;
+
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Name: ${applicationData.personalInfo.fullName}`, margin, yPosition);
+      yPosition += 7;
+      doc.text(`CNIC: ${applicationData.personalInfo.cnic || 'N/A'}`, margin, yPosition);
+      yPosition += 7;
+      doc.text(`Program: ${applicationData.courseSelection.program}`, margin, yPosition);
+      yPosition += 7;
+      doc.text(`Academic Level: ${applicationData.academicInfo.academicLevel}`, margin, yPosition);
+      yPosition += 12;
+
+      // Fee Breakdown
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("FEE BREAKDOWN", margin, yPosition);
+      yPosition += 10;
+
+      const feeData = applicationData.feeDetails ? [
+        { description: "Original Course Fee", amount: applicationData.feeDetails.originalFee },
+        { description: `Scholarship (${applicationData.feeDetails.scholarshipPercentage}%)`, amount: -applicationData.feeDetails.scholarshipAmount },
+        { description: "FINAL PAYABLE AMOUNT", amount: applicationData.feeDetails.finalFee, isTotal: true }
+      ] : [
+        { description: "Tuition Fee", amount: defaultFeeDetails.tuition },
+        { description: "Hostel Fee", amount: defaultFeeDetails.hostel },
+        { description: "Library Fee", amount: defaultFeeDetails.library },
+        { description: "Sports Fee", amount: defaultFeeDetails.sports },
+        { description: "TOTAL PAYABLE AMOUNT", amount: defaultFeeDetails.total, isTotal: true }
+      ];
+
+      feeData.forEach((item, index) => {
+        if (yPosition > 250) {
+          doc.addPage();
+          yPosition = margin;
+        }
+
+        doc.setFontSize(10);
+        if (item.isTotal) {
+          doc.setFont("helvetica", "bold");
+          doc.setDrawColor(200, 200, 200);
+          doc.line(margin, yPosition - 2, pageWidth - margin, yPosition - 2);
+          yPosition += 5;
+          doc.setFontSize(12);
+        } else {
+          doc.setFont("helvetica", "normal");
+        }
+
+        doc.text(item.description, margin, yPosition);
+        
+        const amountText = `${item.amount < 0 ? '-' : ''}PKR ${Math.abs(item.amount).toLocaleString()}`;
+        doc.text(amountText, pageWidth - margin, yPosition, { align: "right" });
+        
+        yPosition += item.isTotal ? 10 : 7;
+      });
+
+      // Payment Instructions
+      yPosition += 5;
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text("PAYMENT INSTRUCTIONS", margin, yPosition);
+      yPosition += 10;
+
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      const instructions = [
+        "1. Pay at any HBL, UBL, or MCB branch within 7 days",
+        "2. Use Application ID as payment reference",
+        `3. Application ID: ${applicationData.feeDetails?.applicationId || applicationId}`,
+        "4. Keep receipt for verification",
+        "5. Upload payment proof in student portal"
+      ];
+
+      instructions.forEach(instruction => {
+        if (yPosition > 270) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(instruction, margin, yPosition);
+        yPosition += 6;
+      });
+
+      // Footer
+      const footerY = doc.internal.pageSize.getHeight() - 10;
+      doc.setFontSize(8);
+      doc.setTextColor(100, 100, 100);
+      doc.text("Computer generated challan - No signature required", pageWidth / 2, footerY, { align: "center" });
+
+      // Save PDF
+      const fileName = `Fee_Challan_${applicationData.feeDetails?.applicationId || applicationId}.pdf`;
+      doc.save(fileName);
+
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Error generating challan. Please try again.");
+    }
   };
 
   const handlePayment = () => {
@@ -114,6 +341,22 @@ const FeePayment = () => {
     setIsProcessing(true);
     setTimeout(() => {
       setIsProcessing(false);
+      
+      // Update payment status in localStorage
+      if (applicationData && applicationData.feeDetails) {
+        try {
+          const updatedData = {
+            ...applicationData,
+            paymentStatus: "paid" as const,
+            paymentDate: new Date().toLocaleDateString()
+          };
+          localStorage.setItem("multistep-form-data", JSON.stringify(updatedData));
+          setApplicationData(updatedData);
+        } catch (error) {
+          console.error("Error updating payment status:", error);
+        }
+      }
+
       alert("Payment processed successfully!");
       setSelectedPaymentType(null);
       setFormData({
@@ -135,7 +378,7 @@ const FeePayment = () => {
             Fee Payment Portal
           </h1>
           <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-            Secure and convenient fee payment options for ACME University students
+            Secure and convenient fee payment options for EDUCO University students
           </p>
         </div>
 
@@ -144,32 +387,40 @@ const FeePayment = () => {
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border border-gray-200/50">
               {/* Toggle */}
-             <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 bg-gray-100 p-1 rounded-xl">
-  <button
-    onClick={() => {
-      setPaymentMethod("online");
-      setSelectedPaymentType(null);
-    }}
-    className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 ${
-      paymentMethod === "online"
-        ? "bg-blue-600 text-white shadow-lg border border-blue-200"
-        : "text-gray-600 hover:text-gray-800"
-    }`}
-  >
-     Online Payment
-  </button>
-  <button
-    onClick={() => setPaymentMethod("offline")}
-    className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 ${
-      paymentMethod === "offline"
-        ? "bg-blue-600 text-white shadow-lg border border-blue-200"
-        : "text-gray-600 hover:text-gray-800"
-    }`}
-  >
-     Offline Payment
-  </button>
-</div>
-
+              <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 bg-gray-100 p-1 rounded-xl">
+                <button
+                  onClick={() => {
+                    setPaymentMethod("online");
+                    setSelectedPaymentType(null);
+                    setApplicationId("");
+                    setApplicationData(null);
+                    setError("");
+                  }}
+                  className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 ${
+                    paymentMethod === "online"
+                      ? "bg-blue-600 text-white shadow-lg border border-blue-200"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  Online Payment
+                </button>
+                <button
+                  onClick={() => {
+                    setPaymentMethod("offline");
+                    setSelectedPaymentType(null);
+                    setApplicationId("");
+                    setApplicationData(null);
+                    setError("");
+                  }}
+                  className={`flex-1 py-2 sm:py-3 px-2 sm:px-4 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 ${
+                    paymentMethod === "offline"
+                      ? "bg-blue-600 text-white shadow-lg border border-blue-200"
+                      : "text-gray-600 hover:text-gray-800"
+                  }`}
+                >
+                  Offline Payment
+                </button>
+              </div>
 
               {paymentMethod === "online" ? (
                 <div className="space-y-4 sm:space-y-6">
@@ -280,28 +531,96 @@ const FeePayment = () => {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-4 sm:space-y-6 text-center">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                    <FiDownload className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
+                <div className="space-y-4 sm:space-y-6">
+                  {/* Application ID Input */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <FiUser className="w-5 h-5 text-blue-500" />
+                      Enter Application ID
+                    </h3>
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        value={applicationId}
+                        onChange={handleApplicationIdChange}
+                        placeholder="Enter your Application ID (e.g., APP-123456-ABC)"
+                        className="w-full p-3 rounded-lg border border-gray-300 text-gray-900 text-sm focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
+                      />
+                      <p className="text-xs text-gray-600">
+                        You can find your Application ID in your application confirmation email or in the student portal.
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
-                    Download Fee Challan
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto">
-                    Download the fee challan and submit it at any designated bank branch along with your payment.
-                  </p>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 max-w-md mx-auto">
-                    <p className="text-sm text-yellow-800 font-medium">
-                      📅 Due Date: September 30, 2025
+
+                  {/* Error Message */}
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 animate-fadeIn">
+                      <div className="flex items-center gap-3">
+                        <FiAlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                        <p className="text-sm text-red-700">{error}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Application Details */}
+                  {applicationData && !error && (
+                    <div className="bg-green-50 border border-green-200 rounded-xl p-4 animate-fadeIn">
+                      <h4 className="font-semibold text-green-800 text-sm sm:text-base mb-3 flex items-center gap-2">
+                        <FiUser className="w-4 h-4" />
+                        Application Found
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <span className="text-green-700">Student:</span>
+                          <p className="font-medium text-green-900">{applicationData.personalInfo.fullName}</p>
+                        </div>
+                        <div>
+                          <span className="text-green-700">Program:</span>
+                          <p className="font-medium text-green-900">{applicationData.courseSelection.program}</p>
+                        </div>
+                        <div>
+                          <span className="text-green-700">Academic Level:</span>
+                          <p className="font-medium text-green-900">{applicationData.academicInfo.academicLevel}</p>
+                        </div>
+                        {applicationData.feeDetails && (
+                          <div>
+                            <span className="text-green-700">Scholarship:</span>
+                            <p className="font-medium text-green-900">{applicationData.feeDetails.scholarshipPercentage}%</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Download Challan Section */}
+                  <div className="text-center space-y-4">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                      <FiDownload className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+                      Download Fee Challan
+                    </h3>
+                    <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto">
+                      Download the fee challan and submit it at any designated bank branch along with your payment.
                     </p>
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 max-w-md mx-auto">
+                      <p className="text-sm text-yellow-800 font-medium">
+                        📅 Due Date: September 30, 2025
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleDownloadChallan}
+                      disabled={!applicationData || !!error}
+                      className={`w-full max-w-sm mx-auto py-3 sm:py-4 font-semibold rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base ${
+                        !applicationData || !!error
+                          ? "bg-gray-400 cursor-not-allowed text-gray-700"
+                          : "bg-green-600 hover:bg-green-700 text-white hover:shadow-xl transform hover:scale-[1.02]"
+                      }`}
+                    >
+                      <FiDownload className="w-4 h-4 sm:w-5 sm:h-5" />
+                      Download Challan - PKR {feeDetails.total.toLocaleString()}
+                    </button>
                   </div>
-                  <button
-                    onClick={handleDownloadChallan}
-                    className="w-full max-w-sm mx-auto py-3 sm:py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base hover:shadow-xl transform hover:scale-[1.02]"
-                  >
-                    <FiDownload className="w-4 h-4 sm:w-5 sm:h-5" />
-                    Download Challan - PKR {feeDetails.total.toLocaleString()}
-                  </button>
                 </div>
               )}
             </div>
@@ -313,39 +632,52 @@ const FeePayment = () => {
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200/50 p-4 sm:p-6">
               <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
                 <FiUser className="w-4 h-4 text-blue-500" />
-                Student Information
+                {applicationData ? "Application Information" : "Student Information"}
               </h3>
               <div className="space-y-3 text-gray-700">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                    JD
+                    {applicationData ? 
+                      applicationData.personalInfo.fullName.split(' ').map(n => n[0]).join('') : 
+                      'JD'
+                    }
                   </div>
                   <div className="text-sm">
                     <p className="text-gray-500">Name</p>
-                    <p className="font-medium text-gray-900">John Doe</p>
+                    <p className="font-medium text-gray-900">
+                      {applicationData ? applicationData.personalInfo.fullName : "John Doe"}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <FiBook className="w-4 h-4 text-blue-400" />
                   <div className="text-sm">
                     <p className="text-gray-500">Program</p>
-                    <p className="font-medium text-gray-900">FSC Pre-Engineering</p>
+                    <p className="font-medium text-gray-900">
+                      {applicationData ? applicationData.courseSelection.program : "FSC Pre-Engineering"}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <FiCalendar className="w-4 h-4 text-blue-400" />
                   <div className="text-sm">
-                    <p className="text-gray-500">Semester</p>
-                    <p className="font-medium text-gray-900">Fall 2025</p>
+                    <p className="text-gray-500">Academic Level</p>
+                    <p className="font-medium text-gray-900">
+                      {applicationData ? applicationData.academicInfo.academicLevel : "Intermediate"}
+                    </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <FiCreditCard className="w-4 h-4 text-blue-400" />
-                  <div className="text-sm">
-                    <p className="text-gray-500">Student ID</p>
-                    <p className="font-medium text-gray-900">CS-2023-001</p>
+                {applicationData?.feeDetails && (
+                  <div className="flex items-center gap-3">
+                    <FiDollarSign className="w-4 h-4 text-green-400" />
+                    <div className="text-sm">
+                      <p className="text-gray-500">Scholarship</p>
+                      <p className="font-medium text-green-600">
+                        {applicationData.feeDetails.scholarshipPercentage}% Approved
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
@@ -356,21 +688,50 @@ const FeePayment = () => {
                 Fee Summary
               </h3>
               <div className="space-y-3 text-sm">
-                {[
-                  { name: "Tuition Fee", amount: feeDetails.tuition },
-                  { name: "Hostel Fee", amount: feeDetails.hostel },
-                  { name: "Library Fee", amount: feeDetails.library },
-                  { name: "Sports Fee", amount: feeDetails.sports },
-                ].map((fee, idx) => (
-                  <div key={idx} className="flex justify-between items-center">
-                    <span className="text-gray-600">{fee.name}</span>
-                    <span className="font-medium text-gray-900">PKR {fee.amount.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center font-bold text-base">
-                  <span className="text-gray-900">Total Payable</span>
-                  <span className="text-blue-600">PKR {feeDetails.total.toLocaleString()}</span>
-                </div>
+                {applicationData?.feeDetails ? (
+                  <>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Original Fee</span>
+                      <span className="font-medium text-gray-900">
+                        PKR {applicationData.feeDetails.originalFee.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-green-600">Scholarship Discount</span>
+                      <span className="font-medium text-green-600">
+                        -PKR {applicationData.feeDetails.scholarshipAmount.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center font-bold text-base">
+                      <span className="text-gray-900">Final Payable</span>
+                      <span className="text-blue-600">
+                        PKR {applicationData.feeDetails.finalFee.toLocaleString()}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {[
+                      { name: "Tuition Fee", amount: feeDetails.tuition },
+                      { name: "Hostel Fee", amount: feeDetails.hostel },
+                      { name: "Library Fee", amount: feeDetails.library },
+                      { name: "Sports Fee", amount: feeDetails.sports },
+                    ].map((fee, idx) => (
+                      <div key={idx} className="flex justify-between items-center">
+                        <span className="text-gray-600">{fee.name}</span>
+                        <span className="font-medium text-gray-900">
+                          PKR {fee.amount.toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="border-t border-gray-200 mt-3 pt-3 flex justify-between items-center font-bold text-base">
+                      <span className="text-gray-900">Total Payable</span>
+                      <span className="text-blue-600">
+                        PKR {feeDetails.total.toLocaleString()}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -387,8 +748,12 @@ const FeePayment = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Status</span>
-                  <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
-                    ⏳ Pending
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    applicationData?.paymentStatus === "paid" 
+                      ? "bg-green-100 text-green-800"
+                      : "bg-yellow-100 text-yellow-800"
+                  }`}>
+                    {applicationData?.paymentStatus === "paid" ? "✅ Paid" : "⏳ Pending"}
                   </span>
                 </div>
                 <div className="bg-blue-50 rounded-lg p-3 mt-2">
