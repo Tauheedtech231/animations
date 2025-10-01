@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FiFileText } from "react-icons/fi";
+
+
 import { HiOutlineDocumentText } from "react-icons/hi";
 
 // Updated Types
@@ -922,6 +923,8 @@ function ScholarshipCalculator({
 
 
 import { jsPDF } from "jspdf";
+import { useRouter } from "next/navigation";
+
 
 // ... (keep all the existing types, interfaces, and configuration objects same as before)
 
@@ -1430,35 +1433,41 @@ function DocumentUploadForm({
           </div>
 
           {/* Payment Proof Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-              Payment Proof (Screenshot/Receipt) <span className="text-red-500">*</span>
-            </label>
-            <label className="block cursor-pointer">
-              <input
-                type="file"
-                accept=".jpg,.png,.pdf"
-                onChange={(e) => handleFileChange("paymentProof", e.target.files)}
-                className="hidden"
-              />
-              <div className={`w-full rounded-xl border-2 border-dashed px-6 py-8 text-center transition-all duration-200 ${
-                data.paymentProof 
-                  ? "border-green-500 bg-green-50 dark:bg-green-900/20" 
-                  : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 hover:border-blue-500 dark:hover:border-blue-400"
-              }`}>
-                <div className="text-gray-600 dark:text-gray-400">
-                  {data.paymentProof ? (
-                    <span className="text-green-600 dark:text-green-400 font-medium">✓ {data.paymentProof}</span>
-                  ) : (
-                    "Click to upload payment proof"
-                  )}
-                </div>
-              </div>
-            </label>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              Upload screenshot or scanned copy of your fee payment receipt
-            </p>
-          </div>
+        {/* Payment Proof Upload (Optional now) */}
+<div>
+  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+    Payment Proof (Screenshot/Receipt) <span className="text-gray-400 text-xs">(Optional)</span>
+  </label>
+  <label className="block cursor-pointer">
+    <input
+      type="file"
+      accept=".jpg,.png,.pdf"
+      onChange={(e) => handleFileChange("paymentProof", e.target.files)}
+      className="hidden"
+    />
+    <div
+      className={`w-full rounded-xl border-2 border-dashed px-6 py-8 text-center transition-all duration-200 ${
+        data.paymentProof
+          ? "border-green-500 bg-green-50 dark:bg-green-900/20"
+          : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 hover:border-blue-500 dark:hover:border-blue-400"
+      }`}
+    >
+      <div className="text-gray-600 dark:text-gray-400">
+        {data.paymentProof ? (
+          <span className="text-green-600 dark:text-green-400 font-medium">
+            ✓ {data.paymentProof}
+          </span>
+        ) : (
+          "Click to upload payment proof (optional)"
+        )}
+      </div>
+    </div>
+  </label>
+  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+    Upload screenshot or scanned copy of your fee payment receipt (optional)
+  </p>
+</div>
+
 
           {/* Other Documents */}
           <div>
@@ -1493,14 +1502,16 @@ function DocumentUploadForm({
   );
 }
 
-function ReviewSubmitForm({ 
-  personalInfo, 
-  academicInfo, 
-  courseSelection, 
+
+
+ function ReviewSubmitForm({
+  personalInfo,
+  academicInfo,
+  courseSelection,
   documents,
   feeDetails,
-  onSubmit 
-}: { 
+  onSubmit,
+}: {
   personalInfo: PersonalInfo;
   academicInfo: AcademicInfo;
   courseSelection: CourseSelection;
@@ -1509,24 +1520,41 @@ function ReviewSubmitForm({
   onSubmit: () => void;
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showFeeModal, setShowFeeModal] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async () => {
-    if (!documents.paymentProof) {
-      alert("Please upload payment proof before submitting.");
-      return;
-    }
-
+    // Removed the "must have payment proof" guard so form can be submitted even without payment proof
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // simulate network / processing delay (keep or remove as you like)
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     console.log("Submitting application:", {
       personalInfo,
       academicInfo,
       courseSelection,
       documents,
-      feeDetails
+      feeDetails,
     });
+
+    // call parent submit handler (keeps existing behavior)
+    try {
+      onSubmit();
+    } catch (err) {
+      console.error("onSubmit error:", err);
+    }
+
     setIsSubmitting(false);
-    onSubmit();
+
+    // show the defaulter popup after submission
+    setShowFeeModal(true);
+  };
+
+  const handleModalOk = () => {
+    setShowFeeModal(false);
+    // redirect to applicant portal
+    router.push("/applicant_portal");
   };
 
   return (
@@ -1615,7 +1643,7 @@ function ReviewSubmitForm({
                 <div><strong className="text-green-600 dark:text-green-400">Scholarship:</strong> {feeDetails.scholarshipPercentage}%</div>
                 <div><strong className="text-green-600 dark:text-green-400">Discount Amount:</strong> {feeDetails.scholarshipAmount.toLocaleString()} PKR</div>
                 <div className="md:col-span-2">
-                  <strong className="text-blue-600 dark:text-blue-400 text-lg">Final Payable Amount:</strong> 
+                  <strong className="text-blue-600 dark:text-blue-400 text-lg">Final Payable Amount:</strong>
                   <span className="text-blue-600 dark:text-blue-400 text-lg font-bold ml-2">
                     {feeDetails.finalFee.toLocaleString()} PKR
                   </span>
@@ -1644,7 +1672,7 @@ function ReviewSubmitForm({
           <div className="flex justify-center pt-6">
             <button
               onClick={handleSubmit}
-              disabled={isSubmitting || !documents.paymentProof}
+              disabled={isSubmitting}
               className="px-8 py-4 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-xl font-medium transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl disabled:shadow-none transform hover:scale-105 disabled:scale-100"
             >
               {isSubmitting ? (
@@ -1661,18 +1689,30 @@ function ReviewSubmitForm({
             </button>
           </div>
 
-          {!documents.paymentProof && (
-            <div className="text-center">
-              <p className="text-red-500 text-sm">
-                Please upload payment proof before submitting your application.
-              </p>
-            </div>
-          )}
+          {/* NOTE: payment proof is no longer required to submit, so the warning block has been removed */}
         </div>
       </div>
+
+      {/* Defaulter / Fee popup modal */}
+      {showFeeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowFeeModal(false)} />
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-lg w-full shadow-xl">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Payment Pending</h3>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+              Your application has been submitted, but we could not find a payment proof. You are currently marked as a <strong>defaulter</strong>. Please pay the required fee and upload the payment screenshot from your Dashboard.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button className="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700" onClick={() => setShowFeeModal(false)}>Close</button>
+              <button className="px-4 py-2 rounded-md bg-green-600 text-white" onClick={handleModalOk}>OK</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 // Enhanced Main Page Component
 export default function MyApplicationsPage() {
@@ -1781,7 +1821,7 @@ export default function MyApplicationsPage() {
 
   const handleSubmit = () => {
     localStorage.removeItem(STORAGE_KEY);
-    setIsSubmitted(true);
+    setIsSubmitted(false);
   };
 
   const handleResetForm = () => {

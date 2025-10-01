@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import Link from "next/link";
 import {
@@ -10,15 +10,56 @@ import {
   FiUser,
   FiBook,
   FiDollarSign,
-  FiMail,
   FiPhone,
   FiMapPin,
   FiClock,
 } from "react-icons/fi";
 
+// Mock JSON Data (ye backend API call se replace ho sakta hai)
+const studentData = {
+  userId: "ASP2025-001",
+  name: "Ali Khan",
+  program: "Intermediate in Pre-Engineering",
+  session: "Fall 2025",
+  startDate: "September 1, 2025",
+  duration: "2 Years",
+  fees: [
+    { item: "Tuition Fee", amount: "PKR 50,000" },
+    { item: "Hostel Fee", amount: "PKR 10,000" },
+    { item: "Library Fee", amount: "PKR 2,000" },
+    { item: "Sports Fee", amount: "PKR 1,500" },
+    { item: "Medical Fee", amount: "PKR 1,000" },
+  ],
+  deadlines: {
+    documentSubmission: "August 15, 2025",
+    feePayment: "August 25, 2025",
+    registration: "August 30, 2025",
+    orientation: "September 1, 2025",
+  },
+};
+
 const ResultsPage = () => {
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [student, setStudent] = useState<typeof studentData | null>(null);
 
+  // Simulate user/session based data fetch
+  useEffect(() => {
+    // Suppose we get userId from session
+    const userId = "ASP2025-001";
+    if (studentData.userId === userId) {
+      setStudent(studentData);
+    }
+  }, []);
+
+  if (!student) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl font-semibold">
+        Loading student data...
+      </div>
+    );
+  }
+
+  // Admission Letter PDF
   const generateAdmissionLetter = () => {
     const doc = new jsPDF();
     doc.setFillColor(59, 130, 246);
@@ -26,7 +67,7 @@ const ResultsPage = () => {
 
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
-    doc.text("ACME UNIVERSITY", 105, 15, { align: "center" });
+    doc.text("ASPIRE COLLEGE", 105, 15, { align: "center" });
     doc.setFontSize(10);
     doc.text("OFFICIAL ADMISSION LETTER", 105, 22, { align: "center" });
 
@@ -35,16 +76,16 @@ const ResultsPage = () => {
     doc.text("Congratulations!", 20, 45);
 
     doc.setFontSize(12);
-    doc.text("Dear John Doe,", 20, 60);
+    doc.text(`Dear ${student.name},`, 20, 60);
 
     const admissionText = [
-      "We are pleased to inform you that you have been accepted into the Computer Science",
-      "program at ACME University for the Fall 2025 semester.",
+      `We are pleased to inform you that you have been accepted into the ${student.program}`,
+      `program at Aspire College for the ${student.session} semester.`,
       "",
-      "Your student ID is: STU2025-001",
-      "Program: Bachelor of Science in Computer Science",
-      "Start Date: September 1, 2025",
-      "Duration: 4 Years",
+      `Your student ID is: ${student.userId}`,
+      `Program: ${student.program}`,
+      `Start Date: ${student.startDate}`,
+      `Duration: ${student.duration}`,
       "",
       "This letter serves as official confirmation of your admission. Please proceed with",
       "the enrollment process by completing the following steps:",
@@ -53,11 +94,11 @@ const ResultsPage = () => {
       "2. Pay the semester fees",
       "3. Complete course registration",
       "",
-      "Welcome to the ACME University family!",
+      "Welcome to the Aspire College family!",
       "",
       "Sincerely,",
       "Admissions Office",
-      "ACME University",
+      "Aspire College",
     ];
 
     admissionText.forEach((line, index) => {
@@ -67,6 +108,7 @@ const ResultsPage = () => {
     return doc;
   };
 
+  // Fee Slip PDF
   const generateFeeSlip = () => {
     const doc = new jsPDF();
     doc.setFillColor(59, 130, 246);
@@ -74,39 +116,36 @@ const ResultsPage = () => {
 
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
-    doc.text("ACME UNIVERSITY", 105, 15, { align: "center" });
+    doc.text("ASPIRE COLLEGE", 105, 15, { align: "center" });
     doc.setFontSize(10);
     doc.text("FEE PAYMENT SLIP", 105, 22, { align: "center" });
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(12);
-    doc.text("Student Name: John Doe", 20, 45);
-    doc.text("Student ID: STU2025-001", 20, 55);
-    doc.text("Program: Computer Science", 20, 65);
-    doc.text("Semester: Fall 2025", 20, 75);
+    doc.text(`Student Name: ${student.name}`, 20, 45);
+    doc.text(`Student ID: ${student.userId}`, 20, 55);
+    doc.text(`Program: ${student.program}`, 20, 65);
+    doc.text(`Session: ${student.session}`, 20, 75);
 
     doc.setFontSize(14);
     doc.text("FEE BREAKDOWN", 20, 95);
 
-    const fees = [
-      { item: "Tuition Fee", amount: "PKR 50,000" },
-      { item: "Hostel Fee", amount: "PKR 10,000" },
-      { item: "Library Fee", amount: "PKR 2,000" },
-      { item: "Sports Fee", amount: "PKR 1,500" },
-      { item: "Medical Fee", amount: "PKR 1,000" },
-    ];
-
-    fees.forEach((fee, index) => {
+    student.fees.forEach((fee, index) => {
       doc.text(fee.item, 20, 110 + index * 8);
       doc.text(fee.amount, 150, 110 + index * 8);
     });
 
     doc.setFont("helvetica", "bold");
-    doc.text("TOTAL PAYABLE: PKR 64,500", 20, 155);
+    const total =
+      student.fees.reduce(
+        (sum, fee) => sum + parseInt(fee.amount.replace(/\D/g, "")),
+        0
+      ) + " PKR";
+    doc.text(`TOTAL PAYABLE: ${total}`, 20, 155);
     doc.setFont("helvetica", "normal");
 
     doc.setFontSize(10);
-    doc.text("Due Date: August 25, 2025", 20, 170);
+    doc.text(`Due Date: ${student.deadlines.feePayment}`, 20, 170);
     doc.text("Payment Methods: Online transfer, Bank draft, or Cash", 20, 180);
 
     return doc;
@@ -119,10 +158,10 @@ const ResultsPage = () => {
     let doc;
     if (docType === "Admission Letter") {
       doc = generateAdmissionLetter();
-      doc.save("ACME_University_Admission_Letter.pdf");
+      doc.save(`${student.userId}_Admission_Letter.pdf`);
     } else if (docType === "Fee Slip") {
       doc = generateFeeSlip();
-      doc.save("ACME_University_Fee_Slip.pdf");
+      doc.save(`${student.userId}_Fee_Slip.pdf`);
     }
     setDownloading(null);
   };
@@ -138,25 +177,25 @@ const ResultsPage = () => {
       step: 1,
       title: "Document Submission",
       description: "Submit all required documents to the admissions office",
-      deadline: "August 15, 2025",
+      deadline: student.deadlines.documentSubmission,
     },
     {
       step: 2,
       title: "Fee Payment",
       description: "Pay your semester fees to confirm your seat",
-      deadline: "August 25, 2025",
+      deadline: student.deadlines.feePayment,
     },
     {
       step: 3,
       title: "Course Registration",
       description: "Register for your courses online",
-      deadline: "August 30, 2025",
+      deadline: student.deadlines.registration,
     },
     {
       step: 4,
       title: "Orientation",
       description: "Attend the new student orientation program",
-      deadline: "September 1, 2025",
+      deadline: student.deadlines.orientation,
     },
   ];
 
@@ -166,35 +205,41 @@ const ResultsPage = () => {
         {/* Welcome Section */}
         <div className="text-center mb-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3">
-            Welcome to Aspire College! 🎓
+            Welcome to Aspire College, {student.name}! 🎓
           </h1>
           <p className="text-gray-700 dark:text-gray-300 text-base sm:text-lg md:text-xl mb-6">
-            We are proud to have you join our community of excellence. Your academic journey towards success starts here!
+            We are proud to have you join our community of excellence. Your
+            academic journey towards success starts here!
           </p>
 
           <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-5 sm:p-6 md:p-8 max-w-3xl mx-auto text-sm sm:text-base transition">
             <div className="grid sm:grid-cols-3 gap-5 text-center">
               <div>
                 <p className="text-gray-500 dark:text-gray-400">Program</p>
-                <p className="font-semibold text-gray-900 dark:text-gray-100">Intermediate in Pre-Engineering</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                  {student.program}
+                </p>
               </div>
               <div>
                 <p className="text-gray-500 dark:text-gray-400">Student ID</p>
-                <p className="font-semibold text-gray-900 dark:text-gray-100">ASP2025-001</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                  {student.userId}
+                </p>
               </div>
               <div>
                 <p className="text-gray-500 dark:text-gray-400">Session</p>
-                <p className="font-semibold text-gray-900 dark:text-gray-100">Fall 2025</p>
+                <p className="font-semibold text-gray-900 dark:text-gray-100">
+                  {student.session}
+                </p>
               </div>
             </div>
             <p className="text-gray-500 dark:text-gray-400 mt-4">
-              Please check your email for enrollment guidelines and orientation details.
+              Please check your email for enrollment guidelines and orientation
+              details.
             </p>
           </div>
         </div>
-
-        {/* Main Grid */}
-        <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Admission Documents */}
@@ -388,6 +433,8 @@ const ResultsPage = () => {
             </div>
           </div>
         </div>
+
+        {/* TODO: rest of the code same as before (Admission Docs, Next Steps, Sidebar) */}
       </div>
     </div>
   );

@@ -14,54 +14,55 @@ export default function Navbar() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const navLinks = [
+  // Default links
+  const defaultLinks = [
     { href: "/", label: "Home" },
     { href: "/applicant_portal", label: "Applicant Portal" },
-    { href: "/portfolio", label: "Portfolio", external: true },
   ];
+
+  // Extra applicant portal links
+  const applicantLinks = [
+    { href: "/applicant_portal", label: "Dashboard" },
+    { href: "/applicant_portal/my_application", label: "My Applications" },
+    { href: "/applicant_portal/fee_mange", label: "Fee Payment" },
+    { href: "/applicant_portal/notification_page", label: "Notifications" },
+    { href: "/applicant_portal/result_page", label: "Results" },
+  ];
+
+  // Decide navLinks based on current path
+  const navLinks = pathname.startsWith("/applicant_portal")
+    ? [...defaultLinks, ...applicantLinks]
+    : defaultLinks;
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-[#0d1117]/70 shadow-md transition-all border-b border-gray-200/20 dark:border-gray-700/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2 group">
-          <div className="h-10 w-10 relative">
+          <Link href="/" className="flex items-center space-x-2 group">
             <div className="h-10 w-10 relative">
               <Image
-                src="https://cdn-icons-png.flaticon.com/512/2907/2907250.png" // Use a local image from public folder for reliability
+                src="https://cdn-icons-png.flaticon.com/512/2907/2907250.png"
                 alt="Online School Logo"
                 width={40}
                 height={40}
                 priority
               />
             </div>
-          </div>
-          <span className="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-300 group-hover:text-blue-600">
- School
-          </span>
-        </Link>
+            <span className="text-xl font-semibold text-gray-900 dark:text-white transition-colors duration-300 group-hover:text-blue-600">
+              School
+            </span>
+          </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex space-x-8">
-            {navLinks.map((link) => {
+            {navLinks.map((link, idx) => {
               const isActive = pathname === link.href;
-              if (link.external) {
-                return (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="relative text-sm font-medium transition-colors duration-300 text-gray-600 dark:text-gray-300 hover:text-blue-600"
-                  >
-                    {link.label}
-                  </a>
-                );
-              }
+              // Use label+href+idx as key to guarantee uniqueness
+              const key = `${link.label}-${link.href}-${idx}`;
               return (
                 <Link
-                  key={link.href}
+                  key={key}
                   href={link.href}
                   className={`relative text-sm font-medium transition-colors duration-300 ${
                     isActive
@@ -155,34 +156,12 @@ export default function Navbar() {
               animate="visible"
               variants={{
                 hidden: { opacity: 0, y: -10 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { staggerChildren: 0.1 },
-                },
+                visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.1 } },
               }}
               className="pt-3 pb-6 space-y-2 px-4 sm:px-6"
             >
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
-                if (link.external) {
-                  return (
-                    <motion.div
-                      key={link.href}
-                      variants={{ hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0 } }}
-                    >
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-600 transition"
-                      >
-                        {link.label}
-                      </a>
-                    </motion.div>
-                  );
-                }
                 return (
                   <motion.div
                     key={link.href}
