@@ -293,17 +293,28 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
       </h1>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex space-x-8">
-        {navItems.map((item) => (
-          <button
-            key={item}
-            onClick={() => scrollToSection(item.toLowerCase())}
-            className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-300"
-          >
-            {item}
-          </button>
-        ))}
-      </div>
+    <div className="hidden md:flex space-x-8">
+  {navItems.map((item) => (
+    <button
+      key={item}
+      onClick={() => {
+        if (item === "Application Portal") {
+          window.location.href = "/applicant_portal"; // redirect
+        }
+        if(item==="Home"){
+          window.location.href="/"
+        }
+         else {
+          scrollToSection(item.toLowerCase()); // scroll for other items
+        }
+      }}
+      className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-300"
+    >
+      {item}
+    </button>
+  ))}
+</div>
+
 
       {/* Mobile Menu Button */}
       <button
@@ -329,24 +340,34 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
       </button>
     </div>
 
-    {/* Mobile Navigation */}
-    <div
-      className={`md:hidden overflow-hidden transition-all duration-500 ${
-        isMenuOpen ? "max-h-96 py-4" : "max-h-0"
-      }`}
-    >
-      <div className="space-y-4">
-        {navItems.map((item) => (
-          <button
-            key={item}
-            onClick={() => scrollToSection(item.toLowerCase())}
-            className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 font-medium transition-colors duration-300"
-          >
-            {item}
-          </button>
-        ))}
-      </div>
-    </div>
+  {/* Mobile Navigation */}
+<div
+  className={`md:hidden overflow-hidden transition-all duration-500 ${
+    isMenuOpen ? "max-h-96 py-4" : "max-h-0"
+  }`}
+>
+  <div className="space-y-4">
+    {navItems.map((item) => (
+      <button
+        key={item}
+        onClick={() => {
+          if (item === "Home") {
+            window.location.href = "/"; // redirect Home
+          } else if (item === "Application Portal") {
+            window.location.href = "/applicant_portal"; // redirect Application Portal
+          } else {
+            scrollToSection(item.toLowerCase()); // scroll for others
+          }
+          setIsMenuOpen(false); // menu close after click
+        }}
+        className="block w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 font-medium transition-colors duration-300"
+      >
+        {item}
+      </button>
+    ))}
+  </div>
+</div>
+
   </div>
 </nav>
 
