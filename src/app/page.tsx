@@ -235,14 +235,17 @@ const ModernCollegeHome = () => {
           Our mission is to foster innovation, critical thinking, and holistic development, 
           preparing students for higher education and professional success.
         </p>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={scrollToContact}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-3 rounded-xl font-semibold shadow-xl transition-all duration-300"
-        >
-          Contact Now
-        </motion.button>
+      <motion.a
+  href="https://nestick-portfolio.vercel.app"
+  target="_blank"
+  rel="noopener noreferrer"
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-3 rounded-xl font-semibold shadow-xl transition-all duration-300 inline-block text-center"
+>
+  View College Portfolio
+</motion.a>
+
       </motion.div>
 
       {/* Stats Section */}
