@@ -221,7 +221,7 @@ export default function HeroSection() {
             onClick={createRipple}
             className="relative overflow-hidden bg-gold text-white px-8 py-4 rounded-lg font-medium text-lg hover:bg-opacity-90 transform hover:scale-105 transition-all duration-300"
           >
-            <span className="relative z-10">Explore Our Work</span>
+          
             
             {/* Ripple Effects */}
             {ripples.map(ripple => (
@@ -262,13 +262,7 @@ export default function HeroSection() {
    
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 z-10">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="w-5 h-8 border border-white/50 rounded-full flex justify-center">
-            <div className="w-0.5 h-2 bg-white/70 rounded-full mt-2 animate-bounce"></div>
-          </div>
-        </div>
-      </div>
+    
 
       <style jsx global>{`
         @keyframes ripple {
