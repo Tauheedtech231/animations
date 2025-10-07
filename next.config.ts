@@ -1,14 +1,32 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
   images: {
-    domains: [
-      "lh3.googleusercontent.com", // ✅ Google profile images
-      "images.unsplash.com", 
-      'cdn-icons-png.flaticon.com',       // ✅ Unsplash images
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn-icons-png.flaticon.com",
+      },
     ],
+    formats: ["image/avif", "image/webp"], // ✅ better performance formats
+    minimumCacheTTL: 600, // cache images for 10 minutes
   },
-  /* other config options here */
+  experimental: {
+    optimizeCss: true,
+    scrollRestoration: true,
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production", // ✅ remove console logs in build
+  },
 };
 
 export default nextConfig;
