@@ -18,8 +18,8 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gold rounded-full"></div>
-              <span className="font-playfair text-2xl font-bold">Antra</span>
+              <div className="w-8 h-8 bg-amber-500 rounded-full"></div>
+              <span className="font-playfair text-2xl font-bold text-amber-500">Antra</span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
               Creating timeless architectural masterpieces that blend innovation with elegance. 
@@ -31,7 +31,7 @@ export default function Footer() {
                   key={social.name}
                   whileHover={{ scale: 1.1, y: -2 }}
                   href="#"
-                  className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-gold dark:hover:bg-gold transition-colors"
+                  className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center hover:bg-amber-500 transition-colors"
                   aria-label={social.name}
                 >
                   {social.icon}
@@ -42,13 +42,13 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-playfair text-xl font-bold mb-4">Quick Links</h4>
+            <h4 className="font-playfair text-xl font-bold mb-4 text-amber-500">Quick Links</h4>
             <ul className="space-y-2">
               {['Home', 'About', 'Services', 'Projects', 'Contact'].map((link) => (
                 <li key={link}>
                   <a
                     href={`#${link.toLowerCase()}`}
-                    className="text-gray-600 dark:text-gray-400 hover:text-gold dark:hover:text-gold transition-colors"
+                    className="text-gray-600 dark:text-gray-400 hover:text-amber-500 transition-colors"
                   >
                     {link}
                   </a>
@@ -59,13 +59,13 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="font-playfair text-xl font-bold mb-4">Services</h4>
+            <h4 className="font-playfair text-xl font-bold mb-4 text-amber-500">Services</h4>
             <ul className="space-y-2">
               {['Architectural Design', 'Interior Design', 'Project Management', 'Consultation'].map((service) => (
                 <li key={service}>
                   <a
                     href="#"
-                    className="text-gray-600 dark:text-gray-400 hover:text-gold dark:hover:text-gold transition-colors"
+                    className="text-gray-600 dark:text-gray-400 hover:text-amber-500 transition-colors"
                   >
                     {service}
                   </a>
@@ -81,9 +81,9 @@ export default function Footer() {
             © {currentYear} Antra Architecture. All rights reserved.
           </p>
           <div className="flex flex-wrap justify-center md:justify-end gap-4 text-sm text-gray-600 dark:text-gray-400">
-            <a href="#" className="hover:text-gold dark:hover:text-gold transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-gold dark:hover:text-gold transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-gold dark:hover:text-gold transition-colors">Cookie Policy</a>
+            <a href="#" className="hover:text-amber-500 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-amber-500 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-amber-500 transition-colors">Cookie Policy</a>
           </div>
         </div>
       </div>
