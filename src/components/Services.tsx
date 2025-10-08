@@ -1,209 +1,202 @@
-// components/ServicesSection.tsx
-'use client'
-import { useRef, useEffect, useState } from 'react'
-import Image from 'next/image'
-import { gsap, ScrollTrigger } from '../lib/gsap'
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Services() {
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const sectionRef = useRef(null)
-  const headingRef = useRef(null)
-  const descriptionRef = useRef(null)
-  const servicesRef = useRef<(HTMLDivElement | null)[]>([])
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const imageRef = useRef<HTMLDivElement | null>(null);
+  const [counts, setCounts] = useState({ projects: 0, team: 0, clients: 0 });
 
-  // Services data
-  const services = [
-    {
-      title: "Residential Interior Design",
-      description: "Transform your living spaces into personalized sanctuaries that reflect your style and enhance your daily life.",
-      image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      icon: "🏠"
-    },
-    {
-      title: "Outdoor & Landscape Design",
-      description: "Create seamless indoor-outdoor transitions with beautifully designed landscapes and exterior living areas.",
-      image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      icon: "🌳"
-    },
-    {
-      title: "Interior Design Consultation",
-      description: "Expert guidance and creative solutions to bring your vision to life with professional design expertise.",
-      image: "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      icon: "💡"
-    },
-    {
-      title: "Commercial Interior Design",
-      description: "Design innovative workspaces that inspire productivity, collaboration, and reflect your brand identity.",
-      image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      icon: "🏢"
-    },
-    {
-      title: "Renovation and Remodeling",
-      description: "Breathe new life into existing spaces with thoughtful renovations that maximize functionality and aesthetics.",
-      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      icon: "🔨"
-    },
-    {
-      title: "Interior 2D/3D Layouts",
-      description: "Visualize your space before construction with detailed 2D plans and immersive 3D renderings.",
-      image: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-      icon: "📐"
-    }
-  ]
-
-  // Detect system dark mode
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    setIsDarkMode(mediaQuery.matches)
-    const handleChange = (e: MediaQueryListEvent) => setIsDarkMode(e.matches)
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
-  }, [])
-
-  // GSAP animations
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Fade-in animation for services
+      gsap.from(".service-item", {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        stagger: 0.2,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 85%",
+        },
+      });
 
       // Heading animation
-      gsap.fromTo(
-        headingRef.current,
-        { y: 80, opacity: 0, rotationX: -10 },
-        {
-          y: 0, opacity: 1, rotationX: 0, duration: 1.2, ease: "power2.out",
-          scrollTrigger: { trigger: headingRef.current, start: "top 90%", end: "bottom 20%", toggleActions: "play none none reverse" }
-        }
-      )
+      gsap.from(".heading", {
+        opacity: 0,
+        y: 40,
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 90%",
+        },
+      });
 
-      // Description animation
-      gsap.fromTo(
-        descriptionRef.current,
-        { y: 50, opacity: 0, scale: 0.95 },
-        {
-          y: 0, opacity: 1, scale: 1, duration: 1, ease: "power2.out",
-          scrollTrigger: { trigger: descriptionRef.current, start: "top 90%", end: "bottom 20%", toggleActions: "play none none reverse" }
-        }
-      )
+      // Left image scroll animation
+      gsap.from(imageRef.current, {
+        x: -100,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: imageRef.current,
+          start: "top 85%",
+        },
+      });
+    }, sectionRef);
 
-      // Services animation: slide up from bottom
-      servicesRef.current.forEach((service, index) => {
-        if (!service) return
+    // Count-up animation
+    const targets = { projects: 0, team: 0, clients: 0 };
+    const interval = setInterval(() => {
+      setCounts((prev) => ({
+        projects: prev.projects < 190 ? prev.projects + 2 : 190,
+        team: prev.team < 260 ? prev.team + 3 : 260,
+        clients: prev.clients < 328 ? prev.clients + 4 : 328,
+      }));
+    }, 50);
 
-        gsap.fromTo(
-          service,
-          { y: 100, opacity: 0, scale: 0.9 },
-          {
-            y: 0, opacity: 1, scale: 1,
-            duration: 1,
-            delay: index * 0.15,
-            ease: "back.out(1.7)",
-            scrollTrigger: { trigger: service, start: "top 90%", end: "bottom 20%", toggleActions: "play none none reverse" }
-          }
-        )
-
-        // Hover 3D effect
-        const image = service.querySelector('.service-image')
-        const content = service.querySelector('.service-content')
-
-        service.addEventListener('mouseenter', () => {
-          gsap.to(image, { scale: 1.08, rotationY: 3, rotationX: 3, duration: 0.6, ease: "power2.inOut" })
-          gsap.to(content, { y: -8, duration: 0.5, ease: "power2.inOut" })
-        })
-        service.addEventListener('mouseleave', () => {
-          gsap.to(image, { scale: 1, rotationY: 0, rotationX: 0, duration: 0.6, ease: "power2.inOut" })
-          gsap.to(content, { y: 0, duration: 0.5, ease: "power2.inOut" })
-        })
-      })
-
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
-
-  const addToServicesRefs = (el: HTMLDivElement | null) => {
-    if (el && !servicesRef.current.includes(el)) servicesRef.current.push(el)
-  }
-
-  const darkModeClasses = {
-    background: isDarkMode ? 'bg-gray-900' : 'bg-white',
-    text: isDarkMode ? 'text-white' : 'text-gray-900',
-    textMuted: isDarkMode ? 'text-gray-300' : 'text-gray-600',
-    card: isDarkMode ? 'bg-gray-800/80' : 'bg-white/80',
-    border: isDarkMode ? 'border-gray-700' : 'border-gray-200',
-    hover: isDarkMode ? 'hover:bg-gray-700/50' : 'hover:bg-gray-50/80'
-  }
+    return () => {
+      clearInterval(interval);
+      ctx.revert();
+    };
+  }, []);
 
   return (
-    <section ref={sectionRef} id="services" className={`py-20 lg:py-32 transition-colors duration-500 ${darkModeClasses.background}`}>
-      <div className="container mx-auto px-6">
+    <section
+      ref={sectionRef}
+      className="py-20 transition-colors duration-300 bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
-        <div className="text-center mb-16 lg:mb-24">
-          <div ref={headingRef} className="inline-block mb-4">
-            <div className="flex items-center space-x-3 px-6 py-3 rounded-full backdrop-blur-sm bg-gold/10 border border-gold/20">
-              <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-              <span className="text-amber-500 text-sm font-semibold tracking-widest uppercase">Our Services</span>
-              <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-            </div>
+        <div className="heading flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="order-2 lg:order-1">
+            <button className="relative group overflow-hidden px-6 py-2 text-sm font-semibold rounded-full border-2 border-yellow-600 dark:border-yellow-400 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-600 dark:hover:bg-yellow-400 hover:text-white transition-all duration-500">
+              <span className="relative z-10 flex items-center gap-2">
+                Our Services <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </span>
+            </button>
           </div>
 
-          <h2 className={`font-playfair text-4xl md:text-5xl lg:text-6xl font-bold mb-6 ${darkModeClasses.text}`}>
-            Premium Design <span className="text-amber-500">Services</span>
-          </h2>
-
-          <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed ${darkModeClasses.textMuted}`}>
-            We specialize in transforming visions into reality. Explore our portfolio of innovative 
-            architectural and interior design projects crafted with precision.
-          </p>
+          <div className="text-center lg:text-right order-1 lg:order-2">
+            <h2 className="text-4xl md:text-5xl font-extrabold leading-tight">
+              Explore Our{" "}
+              <span className="text-yellow-600 dark:text-yellow-400">
+                Comprehensive
+              </span>{" "}
+              <span className="text-yellow-600 dark:text-yellow-400">
+                Interior Design
+              </span>{" "}
+              <span className="text-black dark:text-white">Services</span>
+            </h2>
+            <p className="mt-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto lg:ml-auto text-lg">
+              We specialize in transforming visions into reality. Explore our
+              portfolio of innovative architectural and interior design projects
+              crafted with precision.
+            </p>
+          </div>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              ref={addToServicesRefs}
-              className={`group relative overflow-hidden rounded-2xl backdrop-blur-sm border transition-all duration-500 cursor-pointer h-96 ${darkModeClasses.card} ${darkModeClasses.border} ${darkModeClasses.hover}`}
-              style={{ perspective: '1000px' }}
-            >
-              {/* Background Image */}
-              <div className="service-image absolute inset-0 transform-gpu transition-transform duration-700">
-                <Image src={service.image} alt={service.title} fill className="object-cover" />
-                <div className={`absolute inset-0 bg-gradient-to-t ${isDarkMode ? 'from-gray-900/80 via-gray-900/40 to-transparent' : 'from-white/90 via-white/40 to-transparent'}`}></div>
-              </div>
+        {/* Content Grid */}
+        <div className="mt-16 grid lg:grid-cols-2 gap-12 items-center">
+          {/* Image */}
+          <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-lg">
+            <Image
+              src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80"
+              alt="Interior Design"
+              fill
+              className="object-cover"
+            />
+          </div>
 
-              {/* Content */}
-              <div className="service-content absolute bottom-0 left-0 right-0 p-6 transform-gpu transition-transform duration-500">
-                <div className="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center text-white text-xl mb-4 transform-gpu group-hover:scale-110 transition-transform duration-300">{service.icon}</div>
-                <h3 className={`font-playfair text-2xl font-bold mb-3 group-hover:text-amber-500 transition-colors duration-300 ${darkModeClasses.text}`}>{service.title}</h3>
-                <p className={`text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${darkModeClasses.textMuted}`}>{service.description}</p>
-                <div className="flex items-center text-amber-500 font-semibold text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                  <span>Learn More</span>
-                  <span className="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
+          {/* Services List */}
+          <div className="space-y-8">
+            {[
+              {
+                id: "01",
+                title: "Residential Interior Design",
+              },
+              {
+                id: "02",
+                title: "Outdoor & Landscape Design",
+              },
+              {
+                id: "03",
+                title: "Interior Design Consultation",
+              },
+            ].map((service) => (
+              <div
+                key={service.id}
+                className="service-item flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-5 hover:translate-x-2 transition-transform duration-300"
+              >
+                <div>
+                  <span className="text-gray-400 font-semibold text-lg">
+                    {service.id}
+                  </span>
+                  <h3 className="text-2xl font-bold mt-2 text-gray-800 dark:text-white">
+                    {service.title}
+                  </h3>
+                </div>
+                <div className="flex items-center justify-center bg-yellow-100 dark:bg-yellow-900/30 w-10 h-10 rounded-full">
+                  <ArrowRight className="text-yellow-600 dark:text-yellow-400" />
                 </div>
               </div>
-
-              {/* Hover Glow & Border */}
-              <div className={`absolute inset-0 rounded-2xl border-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${isDarkMode ? 'border-amber-500/30' : 'border-amber-500/20'}`}></div>
-              <div className="absolute inset-0 rounded-2xl bg-amber-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-16">
-          <button className={`group border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105`}>
-            <span className="flex items-center space-x-2">
-              <span>View All Services</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </span>
-          </button>
-        </div>
-      </div>
+        {/* Stats Section */}
+        <div className="stats-section mt-24 grid sm:grid-cols-2 lg:grid-cols-3 gap-10 text-center">
+          <div>
+            <h3 className="text-5xl font-extrabold text-yellow-600 dark:text-yellow-400">
+              2013
+            </h3>
+            <p className="mt-3 text-lg font-medium">Improving Homes</p>
+            <p className="text-gray-500 dark:text-gray-400">
+              Expert craftsmanship improving homes for years.
+            </p>
+          </div>
 
-      {/* Background Decor */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
+          <div>
+            <h3 className="text-5xl font-extrabold text-yellow-600 dark:text-yellow-400">
+              {counts.projects}+
+            </h3>
+            <p className="mt-3 text-lg font-medium">Projects Completed</p>
+            <p className="text-gray-500 dark:text-gray-400">
+              Over 250 successful projects delivered with care.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-5xl font-extrabold text-yellow-600 dark:text-yellow-400">
+              {counts.clients}+
+            </h3>
+            <p className="mt-3 text-lg font-medium">Client Satisfaction</p>
+            <p className="text-gray-500 dark:text-gray-400">
+              Every client satisfied with our design & service.
+            </p>
+          </div>
+        </div>
+
+        {/* Scrolling House Image Section */}
+        <div
+          ref={imageRef}
+          className="mt-24 relative w-full h-[400px] sm:h-[500px] rounded-2xl overflow-hidden shadow-2xl"
+        >
+          <Image
+            src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1920&q=80"
+            alt="Luxury Modern House"
+            fill
+            className="object-cover rounded-2xl"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent"></div>
+        </div>
       </div>
     </section>
-  )
+  );
 }

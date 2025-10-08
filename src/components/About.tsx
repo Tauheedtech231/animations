@@ -1,434 +1,195 @@
-// components/About.tsx
 'use client'
-import { useRef, useEffect, useState } from 'react'
+
+import { useEffect } from 'react'
 import Image from 'next/image'
-import { gsap, ScrollTrigger } from '../lib/gsap'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 import { motion } from 'framer-motion'
+import { Check, Building2, Home, ClipboardList, Layers } from 'lucide-react'
 
-export default function About() {
-  const sectionRef = useRef(null)
-  const contentRef = useRef(null)
-  const imageRef = useRef(null)
-  const statsRef = useRef(null)
-  const searchRef = useRef(null)
-
-  // Ripple effect state
-  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number }>>([])
-  const [isDarkMode, setIsDarkMode] = useState(false)
-
-  // Detect system dark mode preference
+export default function AboutPage() {
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    setIsDarkMode(mediaQuery.matches)
+    gsap.registerPlugin(ScrollTrigger)
 
-    const handleChange = (e: MediaQueryListEvent) => {
-      setIsDarkMode(e.matches)
-    }
-
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
-  }, [])
-
-  // Enhanced ripple effect with better physics
-  const createRipple = (e: React.MouseEvent) => {
-    const button = e.currentTarget
-    const rect = button.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const size = Math.max(rect.width, rect.height)
-
-    const newRipple = {
-      id: Date.now(),
-      x,
-      y,
-      size
-    }
-
-    setRipples(prev => [...prev, newRipple])
-
-    // Remove ripple after animation
-    setTimeout(() => {
-      setRipples(prev => prev.filter(ripple => ripple.id !== newRipple.id))
-    }, 1000)
-  }
-
-  // Enhanced scroll animations
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Content animation with better timing
-      gsap.fromTo(contentRef.current,
-        { 
-          x: -80, 
-          opacity: 0,
-          rotationY: -5
-        },
-        {
-          x: 0,
-          opacity: 1,
-          rotationY: 0,
-          duration: 1.4,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: contentRef.current,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-          }
-        }
-      )
-
-      // Image animation with parallax effect
-      gsap.fromTo(imageRef.current,
-        { 
-          x: 80, 
-          opacity: 0, 
-          scale: 0.92,
-          rotationY: 5
-        },
-        {
-          x: 0,
-          opacity: 1,
-          scale: 1,
-          rotationY: 0,
-          duration: 1.4,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: imageRef.current,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-          }
-        }
-      )
-
-      // Stats animation with stagger
-      gsap.fromTo('.stat-item',
-        { 
-          y: 60, 
-          opacity: 0,
-          scale: 0.8
-        },
+    const elements = gsap.utils.toArray('.fade-up') as Element[]
+    elements.forEach((el) => {
+      gsap.fromTo(
+        el,
+        { y: 60, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "back.out(1.7)",
-          scrollTrigger: {
-            trigger: statsRef.current,
-            start: "top 90%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-          }
-        }
-      )
-
-      // Feature items animation
-      gsap.fromTo('.feature-item',
-        { 
-          x: -40, 
-          opacity: 0 
-        },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: '.feature-item',
-            start: "top 90%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-          }
-        }
-      )
-
-      // Search bar animation
-      gsap.fromTo(searchRef.current,
-        { 
-          y: 40, 
-          opacity: 0,
-          scale: 0.95
-        },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
           duration: 1,
-          delay: 0.6,
-          ease: "elastic.out(1, 0.8)",
-          scrollTrigger: {
-            trigger: searchRef.current,
-            start: "top 95%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-          }
+          ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 85%' },
         }
       )
-    }, sectionRef)
-
-    return () => ctx.revert()
+    })
   }, [])
 
-  const features = [
+  const cards = [
     {
-      title: "Latest Technologies",
-      subtitle: "High-Quality Designs",
-      icon: "✓",
-      description: "Cutting-edge tools and innovative approaches"
+      title: 'Architectural Design',
+      icon: Building2,
+      text: 'We bring your dream concepts to life with precision, from large-scale layouts to refined architectural details.',
     },
     {
-      title: "5 Years Warranty",
-      subtitle: "Residential Design",
-      icon: "✓",
-      description: "Long-term commitment to quality and satisfaction"
-    }
+      title: 'Interior Design & Planning',
+      icon: Home,
+      text: 'Our interior designs blend comfort and creativity, transforming your spaces into artful reflections of you.',
+    },
+    {
+      title: 'Consulting Services',
+      icon: ClipboardList,
+      text: 'Expert guidance at every step — our consultancy ensures each project shines with innovation and practicality.',
+    },
+    {
+      title: 'Project Management',
+      icon: Layers,
+      text: 'We oversee every detail from start to finish — ensuring beauty, efficiency, and peace of mind throughout.',
+    },
   ]
-
-  const stats = [
-    { number: "150+", label: "Projects Completed", suffix: "" },
-    { number: "15+", label: "Years Experience", suffix: "" },
-    { number: "50+", label: "Awards Won", suffix: "" },
-    { number: "98", label: "Client Satisfaction", suffix: "%" }
-  ]
-
-  // Dark mode classes
-  const darkModeClasses = {
-    background: isDarkMode ? 'bg-gray-900' : 'bg-white',
-    text: isDarkMode ? 'text-white' : 'text-gray-900',
-    textMuted: isDarkMode ? 'text-gray-300' : 'text-gray-600',
-    card: isDarkMode ? 'bg-gray-800' : 'bg-light-gray',
-    border: isDarkMode ? 'border-gray-700' : 'border-gray-300',
-    hover: isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
-  }
 
   return (
-   <section 
-  ref={sectionRef} 
-  id="about" 
-  className={`py-20 ${darkModeClasses.background} transition-colors duration-500`}
->
-  <div className="container mx-auto px-6">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-      
-      {/* Content Section */}
-      <div ref={contentRef} className="space-y-8">
-        {/* Main Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="space-y-4"
-        >
-          <h2 className={`font-playfair text-4xl md:text-5xl lg:text-6xl font-bold leading-tight ${darkModeClasses.text}`}>
-            Where Spaces Inspire,<br />
-            <span className="text-amber-500">And Design Comes Alive</span>
-          </h2>
-          
-          {/* Dark mode indicator */}
-          <div className="flex items-center space-x-2 text-sm">
-            <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-green-400' : 'bg-blue-400'}`}></div>
-            <span className={darkModeClasses.textMuted}>
-              {isDarkMode ? 'Dark mode' : 'Light mode'} • System preference
-            </span>
-          </div>
-        </motion.div>
+    <div className="bg-white dark:bg-[#0a0a0a] text-gray-900 dark:text-gray-100 transition-colors duration-500 overflow-hidden">
 
-        {/* Features List */}
-        <div className="space-y-6">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className="feature-item group cursor-pointer"
-              whileHover={{ x: 8, scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <div 
-                className={`flex items-start space-x-4 p-4 rounded-2xl transition-all duration-300 ${darkModeClasses.hover} ${darkModeClasses.card} border ${darkModeClasses.border}`}
+      {/* WHO WE ARE SECTION */}
+      <section className="relative py-24 px-6 md:px-16 overflow-hidden bg-gray-50 dark:bg-[#111] transition-colors duration-500">
+        <div className="absolute inset-0 bg-[url('/patterns/architect-bg.svg')] bg-center bg-contain opacity-10 pointer-events-none"></div>
+
+        <div className="relative z-10 max-w-7xl mx-auto text-center md:text-left space-y-12">
+          {/* Heading */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <div className="flex flex-col items-center md:items-start space-y-2 mb-6">
+              <div className="flex items-center space-x-2 bg-[#fff3e0] dark:bg-[#3a2d17] text-[#c69b5e] px-4 py-1 rounded-full text-sm font-semibold">
+                <span className="w-2 h-2 bg-[#c69b5e] rounded-full"></span>
+                <span>WHO WE ARE</span>
+              </div>
+
+              <motion.div
+                className="h-[3px] w-28 rounded-full bg-gradient-to-r from-[#c69b5e] via-[#e1c17b] to-[#c69b5e] relative overflow-hidden"
+                initial={{ width: 0 }}
+                whileInView={{ width: '7rem' }}
+                transition={{ duration: 1, ease: 'easeInOut' }}
               >
-                <motion.div 
-                  whileHover={{ scale: 1.2, rotate: 5 }}
-                  className="flex-shrink-0 w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
-                >
-                  {feature.icon}
-                </motion.div>
-                <div className="flex-1">
-                  <h3 className={`font-playfair text-xl font-bold mb-1 group-hover:text-amber-500 transition-colors ${darkModeClasses.text}`}>
-                    {feature.title}
-                  </h3>
-                  <p className={`font-semibold mb-1 ${darkModeClasses.text}`}>{feature.subtitle}</p>
-                  <p className={`text-sm ${darkModeClasses.textMuted}`}>{feature.description}</p>
-                </div>
                 <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  whileHover={{ opacity: 1, scale: 1 }}
-                  className="w-2 h-2 bg-amber-500 rounded-full"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                  animate={{ x: ['-100%', '100%'] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                 />
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            </div>
+
+            <h2 className="text-4xl md:text-6xl font-bold leading-tight fade-up">
+              Experience <span className="text-[#c69b5e]">The Art Of Interior Design</span>
+            </h2>
+            <p className="mt-4 max-w-2xl text-gray-600 dark:text-gray-400 fade-up">
+              We specialize in transforming visions into reality. Explore our portfolio of innovative
+              architectural and interior design projects crafted with precision and passion.
+            </p>
+          </motion.div>
+
+          {/* Cards Section */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
+            {cards.map((card, index) => {
+              const Icon = card.icon
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 0.97 }}
+                  className="group relative bg-white dark:bg-[#181818]/80 backdrop-blur-xl rounded-3xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:-translate-y-2 hover:shadow-2xl transition-all duration-500"
+                >
+                  <div className="absolute top-6 right-6 text-[#c69b5e]/20 group-hover:rotate-12 transition-transform duration-700">
+                    <Icon className="w-10 h-10" />
+                  </div>
+                  <div className="mb-5">
+                    <Icon className="w-10 h-10 text-[#c69b5e] mb-3 transition-all duration-500 group-hover:scale-110" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">{card.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{card.text}</p>
+                </motion.div>
+              )
+            })}
+          </div>
         </div>
+      </section>
 
-        {/* Description */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className={`p-6 rounded-2xl border-l-4 border-amber-500 ${darkModeClasses.card} shadow-lg`}
-        >
-          <p className={`text-lg leading-relaxed ${darkModeClasses.text}`}>
-            Whether it is your home, office, or a commercial project, we are always dedicated to bringing your vision to life. Our numbers speak better than words:
-          </p>
-        </motion.div>
+   
 
-        {/* Stats Grid */}
-        <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              className="stat-item group"
-              whileHover={{ 
-                scale: 1.05,
-                y: -5,
-                transition: { type: "spring", stiffness: 400 }
-              }}
+      {/* CTA SECTION */}
+      <section className="bg-[#0e0e0e] dark:bg-[#111] text-white py-20 px-6 md:px-16 overflow-hidden transition-colors duration-500">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 items-center gap-12">
+          {/* Left Side */}
+          <motion.div
+            initial={{ opacity: 0, x: -60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <div className="flex items-center space-x-2 text-[#c69b5e] font-semibold tracking-wide">
+              <span className="w-2 h-2 bg-[#c69b5e] rounded-full"></span>
+              <span>STARTED IN 1991</span>
+            </div>
+
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
+              Where Spaces Inspire, <br />
+              <span className="text-[#c69b5e]">And Design Comes Alive</span>
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4 text-[15px] sm:text-base">
+              {['Latest Technologies', 'High-Quality Designs', '5 Years Warranty', 'Residential Design'].map(
+                (item, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <Check className="w-5 h-5 text-[#c69b5e]" />
+                    <span>{item}</span>
+                  </div>
+                )
+              )}
+            </div>
+
+            <p className="text-gray-300 max-w-lg leading-relaxed">
+              Whether it’s your home, office, or a commercial project, we are always dedicated
+              to bringing your vision to life. Our numbers speak better than words.
+            </p>
+
+            <motion.button
+              whileHover={{ scale: 0.95 }}
+              transition={{ duration: 0.4 }}
+              className="relative group overflow-hidden px-8 py-4 border-2 border-[#c69b5e] text-white font-semibold rounded-full flex items-center gap-3 w-fit hover:bg-[#c69b5e] hover:text-white transition-all duration-500"
             >
-              <div 
-                className={`text-center p-4 rounded-xl shadow-lg cursor-pointer transition-all duration-300 group-hover:shadow-xl ${darkModeClasses.card} ${darkModeClasses.hover} border ${darkModeClasses.border}`}
-              >
-                <div className="font-playfair text-2xl md:text-3xl font-bold text-amber-500 mb-2">
-                  {stat.number}<span className="text-sm">{stat.suffix}</span>
-                </div>
-                <div className={`text-sm font-medium ${darkModeClasses.textMuted} group-hover:text-amber-500 transition-colors`}>
-                  {stat.label}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Image Section */}
-      <motion.div
-        ref={imageRef}
-        initial={{ opacity: 0, scale: 0.9, rotateY: 10 }}
-        whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-        className="relative"
-      >
-        <div className="relative h-96 lg:h-[600px] rounded-3xl overflow-hidden group">
-          <Image
-            src="https://images.unsplash.com/photo-1613977257363-707ba9348227?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-            alt="Modern Architecture Design"
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-1000"
-            priority
-          />
-          <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${
-            isDarkMode ? 'bg-gradient-to-br from-gray-900/40 to-transparent' : 'bg-gradient-to-br from-white/20 to-transparent'
-          }`}></div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.8 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            whileHover={{ y: -5, scale: 1.05 }}
-            className={`absolute bottom-6 left-6 backdrop-blur-md p-4 rounded-xl shadow-2xl border ${
-              isDarkMode ? 'bg-gray-800/90 border-gray-700 text-white' : 'bg-white/90 border-white/20'
-            }`}
-          >
-            <h4 className="font-playfair text-lg font-bold text-amber-500">Modern Design</h4>
-            <p className="text-sm text-amber-500">Architecture & Interior</p>
+              More About Us
+              <span className="text-lg transition-transform duration-500 group-hover:rotate-0 rotate-45">↗</span>
+            </motion.button>
           </motion.div>
 
+          {/* Right Side Image */}
           <motion.div
-            initial={{ opacity: 0, x: 30, scale: 0.8 }}
-            whileInView={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.7 }}
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            className="absolute top-6 right-6 bg-amber-500 text-white p-4 rounded-full shadow-2xl"
+            initial={{ opacity: 0, x: 60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            viewport={{ once: true }}
+            className="relative h-[420px] sm:h-[500px] md:h-[560px] w-full rounded-2xl overflow-hidden shadow-2xl group"
           >
-            <span className="text-sm font-bold block">15+ Years</span>
-            <span className="text-xs">Experience</span>
+            <Image
+              src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2200&q=80"
+              alt="Modern Living Room"
+              fill
+              className="object-cover rounded-2xl group-hover:scale-105 transition-transform duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
           </motion.div>
         </div>
-
-        {/* Background decorative elements */}
-        <motion.div
-          animate={{ 
-            rotate: [0, 5, 0],
-            scale: [1, 1.05, 1]
-          }}
-          transition={{ 
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute -bottom-6 -right-6 w-32 h-32 bg-amber-500 rounded-2xl -z-10 opacity-20"
-        />
-        <motion.div
-          animate={{ 
-            rotate: [0, -5, 0],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{ 
-            duration: 5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-          className={`absolute -top-6 -left-6 w-24 h-24 rounded-full -z-10 opacity-50 ${
-            isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
-          }`}
-        />
-      </motion.div>
+      </section>
     </div>
-
-    {/* Additional Info Section */}
-  <motion.div
-  initial={{ opacity: 0, y: 60 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: false, amount: 0.2 }} // Trigger when 20% of card is visible
-  transition={{ duration: 0.8, delay: 0.4 }}
-  className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6"
->
-  {[
-    { icon: "🎯", title: "Visionary Approach", desc: "Pushing boundaries with innovative design solutions" },
-    { icon: "⚡", title: "Fast Execution", desc: "Efficient project delivery without compromising quality" },
-    { icon: "💎", title: "Premium Quality", desc: "Using finest materials and craftsmanship" }
-  ].map((item, index) => (
-    <motion.div
-      key={index}
-      whileHover={{ 
-        y: -8,
-        scale: 1.02,
-        transition: { type: "spring", stiffness: 400 }
-      }}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.3 }}
-      transition={{ duration: 0.8, delay: index * 0.2 }}
-      className={`p-8 rounded-2xl text-center cursor-pointer border transition-all duration-300 ${darkModeClasses.card} ${darkModeClasses.border} ${darkModeClasses.hover}`}
-    >
-      <motion.div
-        whileHover={{ scale: 1.2, rotate: 360 }}
-        transition={{ duration: 0.6 }}
-        className="w-20 h-20 bg-amber-500 rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-6 shadow-lg"
-      >
-        {item.icon}
-      </motion.div>
-      <h3 className="font-playfair text-2xl font-bold mb-4 text-amber-500">
-        {item.title}
-      </h3>
-      <p className={darkModeClasses.textMuted}>{item.desc}</p>
-    </motion.div>
-  ))}
-</motion.div>
-
-  </div>
-</section>
-
   )
 }

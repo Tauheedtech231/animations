@@ -14,6 +14,14 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "randomuser.me",
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
         hostname: "cdn-icons-png.flaticon.com",
       },
     ],

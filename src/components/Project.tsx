@@ -1,324 +1,244 @@
-// components/Projects.tsx
-'use client'
-import { useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+"use client";
 
-// Register GSAP plugins
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger)
-}
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import type { Swiper as SwiperClass } from 'swiper';
+import Image from "next/image";
+import { ArrowRight, ArrowLeft, Eye } from "lucide-react";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
-const Projects = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const subtitleRef = useRef<HTMLParagraphElement>(null)
-  const projectsRef = useRef<(HTMLDivElement | null)[]>([])
-  const imagesRef = useRef<(HTMLDivElement | null)[]>([])
-  const backgroundRef = useRef<HTMLDivElement>(null)
+gsap.registerPlugin(ScrollTrigger);
 
-  // Sample projects data with high-quality architectural images
+export default function ProjectsSection() {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const swiperRef = useRef<SwiperClass | null>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".projects-heading", {
+        opacity: 0,
+        y: 60,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: { trigger: sectionRef.current, start: "top 85%" },
+      });
+
+      gsap.from(".projects-description", {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        delay: 0.3,
+        ease: "power2.out",
+        scrollTrigger: { trigger: sectionRef.current, start: "top 85%" },
+      });
+
+      gsap.from(".swiper-slide", {
+        opacity: 0,
+        y: 80,
+        scale: 0.9,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "back.out(1.7)",
+        scrollTrigger: { trigger: ".swiper", start: "top 80%" },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   const projects = [
     {
       id: 1,
-      title: "Skyline Penthouse",
-      location: "New York, USA",
-      year: "2024",
-      image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"
+      title: "Modern Villa Design",
+      category: "Residential",
+      img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
     },
     {
       id: 2,
-      title: "Minimalist Villa",
-      location: "Berlin, Germany",
-      year: "2024",
-      image: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2065&q=80"
+      title: "Luxury Apartment",
+      category: "Residential",
+      img: "https://images.unsplash.com/photo-1600585154361-9f24a931c7e6?auto=format&fit=crop&w=1200&q=80",
     },
     {
       id: 3,
-      title: "Ocean View Residence",
-      location: "Malibu, California",
-      year: "2023",
-      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+      title: "Contemporary House",
+      category: "Residential",
+      img: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1200&q=80",
     },
     {
       id: 4,
-      title: "Urban Loft Space",
-      location: "Tokyo, Japan",
-      year: "2024",
-      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+      title: "Minimalist Home",
+      category: "Residential",
+      img: "https://images.unsplash.com/photo-1598300053656-6d5c1a1bfa3d?auto=format&fit=crop&w=1200&q=80",
     },
     {
       id: 5,
-      title: "Mountain Retreat",
-      location: "Swiss Alps, Switzerland",
-      year: "2023",
-      image: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2067&q=80"
+      title: "Urban Residence",
+      category: "Residential",
+      img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
     },
     {
       id: 6,
-      title: "Desert Oasis",
-      location: "Dubai, UAE",
-      year: "2024",
-      image: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-    }
-  ]
-
-  useEffect(() => {
-    // Background parallax effect
-    gsap.to(backgroundRef.current, {
-      yPercent: -30,
-      ease: "none",
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "bottom top",
-        scrub: 1
-      }
-    })
-
-    // Title animation
-    gsap.fromTo(titleRef.current,
-      {
-        y: 100,
-        opacity: 0
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: titleRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none reverse"
-        }
-      }
-    )
-
-    // Subtitle animation
-    gsap.fromTo(subtitleRef.current,
-      {
-        y: 60,
-        opacity: 0
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        delay: 0.3,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: subtitleRef.current,
-          start: "top 80%",
-          end: "bottom 20%",
-          toggleActions: "play none none reverse"
-        }
-      }
-    )
-
-    // Project cards animations
-    projectsRef.current.forEach((project, index) => {
-      if (!project) return
-
-      let animationFrom: gsap.TweenVars
-      
-      // Alternate animation directions
-      if (index % 3 === 0) {
-        animationFrom = { x: -100, opacity: 0 } // Left
-      } else if (index % 3 === 1) {
-        animationFrom = { x: 100, opacity: 0 } // Right
-      } else {
-        animationFrom = { y: 100, opacity: 0 } // Bottom
-      }
-
-      gsap.fromTo(project,
-        animationFrom,
-        {
-          x: 0,
-          y: 0,
-          opacity: 1,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: project,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      )
-    })
-
-    // Image hover animations setup
-    imagesRef.current.forEach((image) => {
-      if (!image) return
-
-      // Initial state
-      gsap.set(image, { transformPerspective: 1000 })
-
-      // Hover animation
-      const hoverAnimation = gsap.to(image, {
-        scale: 1.05,
-        duration: 0.8,
-        ease: "power2.out",
-        paused: true
-      })
-
-      // Glow effect
-      const glowAnimation = gsap.to(image, {
-        boxShadow: "0 0 40px 10px rgba(245, 158, 11, 0.3)",
-        duration: 0.8,
-        ease: "power2.out",
-        paused: true
-      })
-
-      image.addEventListener('mouseenter', () => {
-        hoverAnimation.play()
-        glowAnimation.play()
-      })
-
-      image.addEventListener('mouseleave', () => {
-        hoverAnimation.reverse()
-        glowAnimation.reverse()
-      })
-    })
-
-    // Cleanup
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
-    }
-  }, [])
-
-  // Helper function to assign refs
-  const addToRefs = (el: HTMLDivElement | null, index: number, type: 'project' | 'image') => {
-    if (type === 'project') {
-      projectsRef.current[index] = el
-    } else {
-      imagesRef.current[index] = el
-    }
-  }
+      title: "Family House",
+      category: "Residential",
+      img: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?auto=format&fit=crop&w=1200&q=80",
+    },
+  ];
 
   return (
-    <section 
+    <section
       ref={sectionRef}
-      className="relative min-h-screen bg-white dark:bg-gray-900 overflow-hidden py-20"
+      className="bg-white dark:bg-gray-950 py-24 lg:py-32 overflow-hidden transition-colors duration-500"
     >
-      {/* Animated Background */}
-      <div 
-        ref={backgroundRef}
-        className="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-gray-100 dark:from-gray-800 dark:via-gray-900 dark:to-black opacity-40"
-      />
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-16 lg:mb-20">
+          <div className="projects-heading">
+            <div className="inline-flex items-center gap-2 bg-yellow-50 dark:bg-yellow-500/10 border border-yellow-200 dark:border-yellow-400/30 text-yellow-700 dark:text-yellow-400 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              OUR Projects
+            </div>
 
-      {/* Decorative Elements */}
-      <div className="absolute top-20 left-10 w-2 h-2 bg-amber-400 rounded-full opacity-60 animate-pulse" />
-      <div className="absolute top-40 right-20 w-1 h-1 bg-amber-400 rounded-full opacity-40" />
-      <div className="absolute bottom-32 left-20 w-3 h-3 bg-amber-400 rounded-full opacity-30 animate-pulse" />
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900 dark:text-white">
+              Creative{" "}
+              <span className="text-transparent bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text">
+                Projects That
+              </span>{" "}
+              Define Our Style
+            </h2>
+          </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header Section */}
-        <div className="text-center mb-20 lg:mb-28">
-          <h1 
-            ref={titleRef}
-            className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 dark:text-white mb-6 tracking-tight"
-          >
-            Creative Projects That <span className="text-amber-500">Define</span> Our Style
-          </h1>
-          <p 
-            ref={subtitleRef}
-            className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed font-light"
-          >
-            Our portfolio showcases a diverse range of projects — from beautifully crafted residential spaces to functional and stylish commercial interiors.
+          <p className="projects-description mt-6 text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed">
+            Discover our diverse portfolio of beautifully crafted spaces — from
+            stunning residential designs to innovative commercial interiors that
+            inspire and transform.
           </p>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 lg:gap-12">
-          {projects.map((project, index) => (
-            <div
-              key={project.id}
-              ref={el => addToRefs(el, index, 'project')}
-              className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-700"
+        {/* Swiper Section */}
+        <div className="relative">
+          {/* Navigation Buttons */}
+          <div className="flex justify-end gap-4 mb-8">
+            <button
+              onClick={() => swiperRef.current?.slidePrev()}
+              className="group w-12 h-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full flex items-center justify-center hover:bg-yellow-500 hover:border-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              {/* Image Container */}
-              <div className="relative overflow-hidden">
-                <div
-                  ref={el => addToRefs(el, index, 'image')}
-                  className="relative h-80 md:h-96 w-full transform-gpu transition-all duration-800"
-                >
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaUMk9faKGwqwSOz2QYvVkSshIqyBWh5w//2Q=="
-                  />
-                  
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
-                  
-                  {/* Golden Border Effect */}
-                  <div className="absolute inset-0 border-2 border-transparent group-hover:border-amber-400/30 transition-all duration-500 rounded-2xl" />
-                </div>
+              <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-white transition-colors" />
+            </button>
+            <button
+              onClick={() => swiperRef.current?.slideNext()}
+              className="group w-12 h-12 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full flex items-center justify-center hover:bg-yellow-500 hover:border-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              <ArrowRight className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-white transition-colors" />
+            </button>
+          </div>
 
-                {/* Project Info Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <div className="flex justify-between items-end">
-                    <div>
-                      <h3 className="text-xl font-light mb-1">{project.title}</h3>
-                      <p className="text-amber-200 text-sm font-light">{project.location}</p>
+          <Swiper
+            onSwiper={(swiper) => (swiperRef.current = swiper)}
+            spaceBetween={24}
+            slidesPerView={1.1}
+            loop={true}
+            grabCursor={true}
+            autoplay={{
+              delay: 4000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            pagination={{
+              clickable: true,
+              el: ".custom-pagination",
+              bulletClass: "custom-bullet",
+              bulletActiveClass: "custom-bullet-active",
+            }}
+            modules={[Autoplay, Pagination, Navigation]}
+            breakpoints={{
+              640: { slidesPerView: 1.2, spaceBetween: 20 },
+              768: { slidesPerView: 2.2, spaceBetween: 24 },
+              1024: { slidesPerView: 3.1, spaceBetween: 28 },
+              1280: { slidesPerView: 3.3, spaceBetween: 32 },
+            }}
+          >
+            {projects.map((project) => (
+              <SwiperSlide key={project.id}>
+                <div className="group relative bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100 dark:border-gray-800">
+                  <div className="relative h-80 lg:h-96 overflow-hidden">
+                    <Image
+                      src={project.img}
+                      alt={project.title}
+                      fill
+                      className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 brightness-[0.95] dark:brightness-[0.8]"
+                    />
+
+                    {/* Overlay with View Text */}
+                    <div className="absolute inset-0 bg-black/50 dark:bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center">
+                      <Eye className="w-10 h-10 text-white mb-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500" />
+                      <span className="text-white text-xl font-semibold tracking-wide opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                        View Project
+                      </span>
                     </div>
-                    <span className="text-amber-300 text-lg font-light bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">
-                      {project.year}
-                    </span>
+
+                    {/* Category Badge */}
+                    <div className="absolute top-6 left-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border border-white/40 dark:border-gray-700 px-4 py-2 rounded-full text-gray-800 dark:text-gray-100 font-semibold text-sm shadow-lg">
+                      {project.category}
+                    </div>
+                  </div>
+
+                  {/* Project Info */}
+                  <div className="p-6">
+                    <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2">
+                      {project.title}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      {project.category}
+                    </p>
                   </div>
                 </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
 
-                {/* Golden Accent Line */}
-                <div className="absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-              </div>
-            </div>
-          ))}
+          {/* Pagination */}
+          <div className="custom-pagination flex justify-center gap-2 mt-8"></div>
         </div>
 
-        {/* Footer CTA */}
-        <div className="text-center mt-20">
-          <div className="inline-flex items-center space-x-4 text-gray-600 dark:text-gray-300">
-            <div className="w-8 h-px bg-amber-400"></div>
-            <span className="text-sm font-light tracking-wider">EXPLORE MORE WORK</span>
-            <div className="w-8 h-px bg-amber-400"></div>
-          </div>
+        {/* CTA */}
+        <div className="text-center mt-16">
+          <button className="group relative px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-yellow-500/30 transition-all duration-500 hover:scale-105">
+            <span className="relative z-10 flex items-center gap-3">
+              View All Projects
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-yellow-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </button>
         </div>
       </div>
 
-      {/* Global Styles */}
-      <style jsx global>{`
-        .project-card {
-          transform-style: preserve-3d;
+      <style jsx>{`
+        .custom-bullet {
+          width: 12px;
+          height: 12px;
+          background: #d1d5db;
+          border-radius: 50%;
+          margin: 0 4px;
+          cursor: pointer;
+          transition: all 0.3s ease;
         }
-        
-        /* Smooth scrolling */
-        html {
-          scroll-behavior: smooth;
+        .custom-bullet-active {
+          background: linear-gradient(135deg, #f59e0b, #d97706);
+          transform: scale(1.2);
         }
-        
-        /* Custom gold gradient */
-        .gold-gradient {
-          background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+        :global(.dark .custom-bullet) {
+          background: #4b5563;
         }
-        
-        /* Luxury shadow effects */
-        .luxury-shadow {
-          box-shadow: 
-            0 25px 50px -12px rgba(0, 0, 0, 0.25),
-            0 0 0 1px rgba(245, 158, 11, 0.05);
+        :global(.dark .custom-bullet-active) {
+          background: linear-gradient(135deg, #fbbf24, #f59e0b);
         }
       `}</style>
     </section>
-  )
+  );
 }
-
-export default Projects
